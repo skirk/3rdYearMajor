@@ -34,8 +34,10 @@ class Node {
 		std::vector<Slot> m_outputSlots;
 
 	public:
-		Node(const std::string &_filename);
+		Node();
 		~Node();
+		void addInputSlot(const Slot&);
+		void addOutputSlot(const Slot&);
 };
 
 #endif

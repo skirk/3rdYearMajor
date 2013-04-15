@@ -1,1 +1,12 @@
-<xml> test </xml>
+<node type="diagram" name="multiply"
+	id="00" sheet="multiply.xsl">
+	<inputs>
+		<slot name="in1">  asdsad </slot>
+		<slot name="in2">bbbb</slot>
+	</inputs>
+	<outputs>
+		<slot name="out1">ehhehee</slot>
+	</outputs>
+</node>
+
+

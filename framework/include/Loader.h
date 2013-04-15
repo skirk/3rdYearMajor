@@ -7,6 +7,7 @@
 #define _LOADER_H_
 
 #include <libxml/tree.h>
+#include <string>
 
 class Loader
 {
@@ -28,7 +29,7 @@ class Loader
 		  Parse the given file
 		  \param _filename path to file
 		  */
-		xmlDocPtr parseFile(const char *_filename);
+		//xmlDocPtr loadDocument(const char *_filename);
 		//! Create a node object
 		/*!
 		  create a node according to the passed in document
@@ -40,8 +41,8 @@ class Loader
 		  create a node according to the passed in document
 		  \param _doc the tree to parse
 		  */
-		void loadFiles(const xmlDocPtr &_doc);
-		void createNode(const xmlDocPtr &_doc);
+        //void loadFolder(const std::string &_location);
+		//void parseNode(const xmlDocPtr &_doc);
 		//! A increment operator overload
 		/*!
 		  increment the m_current variable

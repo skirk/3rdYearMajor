@@ -7,6 +7,7 @@
 #define _DATABASE_H_
 
 #include <vector>
+#include "Node.h"
 
 class DataBase
 {
@@ -16,6 +17,7 @@ class DataBase
 		 * Call for Loader class to generate all the nodes that have been implemented
 		*/
 		DataBase();
+		std::vector<Node> m_nodes;
 
 };
 #endif
