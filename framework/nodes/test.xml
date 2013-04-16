@@ -1,11 +1,10 @@
 <node type="diagram" name="multiply"
 	id="00" sheet="multiply.xsl">
 	<inputs>
-		<slot name="in1">  asdsad </slot>
-		<slot name="in2">bbbb</slot>
+		<slot name="in1" type="INPUT" var="VEC3"/>
+		<slot name="in1" type="INPUT" var="VEC3"/>
 	</inputs>
 	<outputs>
-		<slot name="out1">ehhehee</slot>
 	</outputs>
 </node>
 
