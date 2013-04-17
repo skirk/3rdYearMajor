@@ -1,6 +1,6 @@
 PROJECT=Framework
 CXX=g++
-OPTS=-c -g -Wall
+OPTS=-c -g -Wall -std=c++0x
 
 
 # folder structure
