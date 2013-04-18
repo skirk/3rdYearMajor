@@ -8,6 +8,8 @@
 
 class NodeNetwork
 {
+	public:
+		void connectNodes();
 
 };
 

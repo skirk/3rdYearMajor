@@ -17,6 +17,12 @@
 class DataBase
 {
 	public:
+
+		static const char* SHEET;
+		static const char* NAME;
+		static const char* NODE;
+
+	public:
 		/*! \brief A constructor
 		 *
 		 * Call for Loader class to generate all the nodes that have been implemented

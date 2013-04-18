@@ -6,12 +6,20 @@ OPTS=-c -g -Wall -std=c++0x
 # folder structure
 SRCDIR = src
 OBJDIR = obj
-INCDIR = include
+INCDIR = include \
+	 /usr/include/python2.6/ \
+         /usr/local/include \
 
-LDFLAGS= `xml2-config --libs`
+LDFLAGS= `xml2-config --libs` \
+	 `xslt-config --libs` \
+	 -lpython2.6 -lm -L/usr/lib/python2.6/config \
+	 -lboost_python \
+	 -lboost_system
+
 
 INCLUDEPATH= `xml2-config --cflags` \
-	    	-I$(INCDIR) 
+	     `xslt-config --cflags` \
+	     -I$(INCDIR) 
 
 SRCS := $(shell find $(SRCDIR) -name '*.cpp')
 SRCDIRS := $(shell find $(SRCDIR) -type d | sed 's/$(SRCDIR)/./g' )
@@ -33,9 +41,9 @@ buildrepo:
 
 #create obj directory structure
 define make-repo
-	mkdir -p $(OBJDIR)
-	for dir in $(SRCDIRS); \
-		do \
-			mkdir -p $(OBJDIR)/$$dir; \
-		done
+mkdir -p $(OBJDIR)
+for dir in $(SRCDIRS); \
+	do \
+	mkdir -p $(OBJDIR)/$$dir; \
+	done
 endef
