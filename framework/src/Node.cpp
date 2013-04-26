@@ -13,3 +13,13 @@ void Node::addOutputSlot(const Slot &_in)
 {
 	m_outputSlots.push_back(_in);
 }
+
+Node *Node::clone() const
+{
+	return new Node(*this);
+}
+
+std::string Node::getName() const
+{
+	return m_name;
+}

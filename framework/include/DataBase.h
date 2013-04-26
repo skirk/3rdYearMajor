@@ -7,21 +7,12 @@
 #define _DATABASE_H_
 
 #include <vector>
+#include <string>
 
-#include <libxml/tree.h>
-
-#ifndef _NODE_H_
-#include "Node.h"
-#endif
+class Node;
 
 class DataBase
 {
-	public:
-
-		static const char* SHEET;
-		static const char* NAME;
-		static const char* NODE;
-
 	public:
 		/*! \brief A constructor
 		 *
@@ -32,9 +23,17 @@ class DataBase
 		 *
 		 * Call for Loader class to generate all the nodes that have been implemented
 		 */
-		void addNode(xmlDocPtr _doc, xmlNodePtr _cur);
+		void listNodes();
+
+		typedef std::vector<Node*> NodeMap;
+		NodeMap::iterator begin();
+		NodeMap::iterator end();
+
+		void addNode(Node *_n);
+		const Node *getNode(const std::string &_name);
+
 	private:
-		std::vector<Node> m_nodes;
+		NodeMap m_nodes;
 
 };
 #endif

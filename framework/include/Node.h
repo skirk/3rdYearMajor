@@ -6,8 +6,8 @@
 #ifndef _NODE_H_
 #define _NODE_H_
 
-#include <string>
 #include <vector>
+#include <string>
 
 #include "Slot.h"
 
@@ -16,16 +16,16 @@
 	Determines the node type
 */
 enum nodeType {
-	DIAGRAM, /*!< Enum value DIAGRAM. */
+	NETWORK, /*!< Enum value NETWORK. */
 	STATE /*!< Enum value STATE. */
 };
 
 class Node {
-	private:
+	protected:
+		//! name of the node
+		std::string m_name;
 		//! id of the node
 		int m_id;
-		//! node name
-		std::string m_name;
 		//! type
 		nodeType m_type;
 		//! inputSlots
@@ -35,7 +35,9 @@ class Node {
 
 	public:
 		Node();
-		~Node();
+		virtual	~Node();
+		std::string getName() const;
+		virtual Node *clone() const;
 		void addInputSlot(const Slot&);
 		void addOutputSlot(const Slot&);
 };

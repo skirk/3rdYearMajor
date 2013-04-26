@@ -1,70 +1,41 @@
 #include "DataBase.h"
 #include "FileInterface.h"
-#include <libxslt/xsltutils.h>
-#include "Parser.h"
-#include <iostream>
+#include "Node.h"
 
-const char* DataBase::SHEET="sheet";
-const char* DataBase::NAME="name";
-const char* DataBase::NODE="node";
+#include <iostream>
+#include <memory>
+#include <cstdlib>
 
 DataBase::DataBase()
 {
-	FileInterface<xmlDocPtr> *file = new FileInterface<xmlDocPtr>();
-	std::vector<xmlDocPtr> docvec = file->loadFolder(xmlParseFile, "nodes/nodes");
-	xmlDocPtr schema = file->loadFile(xmlParseFile, "nodes/schemas/schema.xml");
-
-	Parser *p = new Parser();
-	xmlNodePtr cur;
-	for(unsigned int i = 0; i < docvec.size(); i++)
-	{
-		if (p->validateAgainstSchema(docvec[i], schema) == 1);
-		{
-			cur = xmlDocGetRootElement(docvec[i]);
-			while(cur != NULL) {
-				if(!xmlStrcmp(cur->name, (const xmlChar *)NODE))
-				{
-					addNode(docvec[i], cur);
-				}
-				cur = cur->next;
-			}
-		}
-		xmlFreeDoc(docvec[i]);
-	}
-	xmlFreeDoc(schema);
-	delete file;
 }
 
-void DataBase::addNode(xmlDocPtr _doc, xmlNodePtr _cur)
+void DataBase::addNode(Node *_n)
 {
-	Parser *p = new Parser();
-	xmlChar *key;
-	key = p->parseAttribute(_cur, SHEET);
-	if (key==NULL)
-	{
-		xmlChar *name = p->parseAttribute(_cur, NAME);
-		if(name==NULL)
-		{
-			std::cout<<"Unknown node\n";
-			xmlFree(name);
-			return;
-		}
-		std::cout<<"Node "<<name<<" doesn't have a stylesheet"<<'\n';
-		xmlFree(name);
-		return;
-	}
-	FileInterface<xmlDocPtr> *file = new FileInterface<xmlDocPtr>();
-	file->changeContext("nodes/stylesheets/");
-	if (file->loadFile(xmlParseFile, (const char*)key) == NULL)
-	{
-		xmlChar *name = p->parseAttribute(_cur, NAME);
-		std::cout<<"Failed to parse "<<name<<"'s stylesheet"<<'\n';
-		xmlFree(name);
-		return;
+	m_nodes.push_back(_n->clone());
+}
 
+const Node *DataBase::getNode(const std::string &_name)
+{
+	NodeMap::const_iterator it;
+	for (it = m_nodes.begin(); it != m_nodes.end(); ++it)
+	{
+		const Node *n = *it;
+		if(n->getName() == _name)
+		{
+			return n;
+		}
 	}
-	std::cout<<"keyword: "<<key<<'\n';
-	m_nodes.push_back(*p->parseNode(_doc, _cur));
-	xmlFree(key);
-	delete p;
+	static Node empty;
+	return &empty;	
+}
+
+DataBase::NodeMap::iterator DataBase::begin()
+{
+	return m_nodes.begin();
+}
+
+DataBase::NodeMap::iterator DataBase::end()
+{
+	return m_nodes.end();
 }
