@@ -15,12 +15,12 @@ void DataBase::addNode(Node *_n)
 	m_nodes.push_back(_n->clone());
 }
 
-const Node *DataBase::getNode(const std::string &_name)
+Node *DataBase::getNode(const std::string &_name)
 {
-	NodeMap::const_iterator it;
+	NodeMap::iterator it;
 	for (it = m_nodes.begin(); it != m_nodes.end(); ++it)
 	{
-		const Node *n = *it;
+		Node *n = *it;
 		if(n->getName() == _name)
 		{
 			return n;

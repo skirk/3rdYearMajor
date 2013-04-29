@@ -3,10 +3,11 @@
 
 #include <libxslt/xsltutils.h>
 #include <libxml/tree.h>
+#include "Enum.h"
+#include <string>
 
 class Node;
 class DataBase;
-class NodeNetwork;
 
 class NodeFactory
 {
@@ -36,7 +37,7 @@ class NodeFactory
 		 *
 		 * 
 		 */
-		Node *createNode(const std::string &_type);
+		Node *createNode(const std::string &_name, const NodeType&);
 
 	private:
 		DataBase *m_db;

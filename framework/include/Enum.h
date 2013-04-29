@@ -14,6 +14,12 @@ enum class SlotVar {
 	OUTPUT = 0X2000
 };
 
+enum class nodeType {
+	GRAPH,
+	EXPRESSION,
+	STATE
+};
+
 
 inline const SlotVar
 operator|(SlotVar __x, SlotVar __y)

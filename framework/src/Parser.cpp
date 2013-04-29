@@ -12,8 +12,11 @@ const char* Parser::NODESLOT = "slot";
 
 Node* Parser::parseNode(const xmlDocPtr &_doc, xmlNodePtr _cur)
 { 
-	_cur = _cur->xmlChildrenNode;
 	Node *temp = new Node();
+	std::string name = (const char*)parseAttribute(_cur, "name");
+	temp->setName(name);
+
+	_cur = _cur->xmlChildrenNode;
 	while(_cur != NULL) {
 		//compare first argument to the latter 
 		if(!xmlStrcmp(_cur->name, (const xmlChar *)NODEINPUTS)) {

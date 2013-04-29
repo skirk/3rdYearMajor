@@ -1,14 +1,16 @@
-#ifndef _PARSER_H_
-#define _PARSER_H_
-
-#include <libxml/tree.h>
-
 /*! \author Tuomo Rinne
  *  \version 0.1
  *  \date 15/04/2013 Initialisation 
  *  \class Parser
  *  \brief Parser class creates reads in xml and stylesheet documents
  */
+
+#ifndef _PARSER_H_
+#define _PARSER_H_
+
+#include <libxml/tree.h>
+
+
 
 class Node;
 class Slot;
