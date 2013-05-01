@@ -24,17 +24,19 @@ class Graph : public Node
 		 * DataBase that the graph gets its nodes from
 		 */
 		DataBase *m_db;
-		typedef std::vector<Node*> NodeMap;
+		typedef std::vector<Node*> NodeVec;
 		/*! \brief Vector of Nodes
 		 *
 		 * Nodes inside the graph
 		 */
-		NodeMap m_nodes;
+		NodeVec m_nodes;
 		/*! \brief Vector of Connections
 		 *
 		 *  Successful connections inside the Graph
 		 */
 		std::vector<Connection*> m_connections;
+	private:
+		Node *getNode(const std::string &_name);
 	public:
 		/* \brief A constructor
 		 *
@@ -47,7 +49,7 @@ class Graph : public Node
 		 * \param _lhs left hand side Slot
 		 * \param _rhs right hand side Slot
 		 */
-		void connectNodes(const Slot &_lhs, const Slot &_rhs);
+		void connectNodes(const std::string &_lhs, const std::string &_rhs);
 		/* \brief Add node to the Graph from the Database
 		 *
 		 * \param _name name of the node to add
@@ -58,12 +60,16 @@ class Graph : public Node
 		 *
 		 * This method is used by PythonWrapper to iterate through the vector
 		 */
-		NodeMap::iterator begin();
+		NodeVec::iterator begin();
 		/* \brief Returns and iterator to the last element of m_nodes vector.
 		 *
 		 * This method is used by PythonWrapper to iterate through the vector
 		 */
-		NodeMap::iterator end();
+		NodeVec::iterator end();
+
+		void exportXML();
+
+
 };
 
 #endif

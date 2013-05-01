@@ -6,7 +6,7 @@
 #include <libxml/xmlschemas.h>
 #include <iostream>
 
-const char* Parser::NODEINPUTS = "inputs";
+const char* Parser::NODESLOTS = "slots";
 const char* Parser::NODEOUTPUTS = "outputs";
 const char* Parser::NODESLOT = "slot";
 
@@ -15,52 +15,60 @@ Node* Parser::parseNode(const xmlDocPtr &_doc, xmlNodePtr _cur)
 	Node *temp = new Node();
 	std::string name = (const char*)parseAttribute(_cur, "name");
 	temp->setName(name);
-
 	_cur = _cur->xmlChildrenNode;
 	while(_cur != NULL) {
-		//compare first argument to the latter 
-		if(!xmlStrcmp(_cur->name, (const xmlChar *)NODEINPUTS)) {
-			std::cout<<"nodename "<< _cur->name <<'\n';
-			temp->addInputSlot(*parseSlot(_doc, _cur));
-		}
-		if(!xmlStrcmp(_cur->name, (const xmlChar *)NODEOUTPUTS)) {
-			std::cout<<"nodename "<< _cur->name <<'\n';
-			temp->addOutputSlot(*parseSlot(_doc, _cur));
+		if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOTS)) {
+			xmlNodePtr _cur2 = _cur->xmlChildrenNode;
+			std::cout<<"in slots "<< _cur->name <<'\n';
+			while(_cur2 != NULL) {
+				if(!xmlStrcmp(_cur2->name, (const xmlChar *)NODESLOT)) {
+					temp->add(parseSlot(_doc, _cur2));
+				}
+			_cur2 = _cur2->next;
+			}
 		}
 		_cur = _cur->next;
-
 	}
 	return temp;
+}
+/*
+   while(_cur != NULL) {
+//compare first argument to the latter 
+if(!xmlStrcmp(_cur->name, (const xmlChar *)NODEINPUTS)) {
+std::cout<<"adding to the node "<< _cur->name <<'\n';
+temp->add(parseSlot(_doc, _cur));
+}
+if(!xmlStrcmp(_cur->name, (const xmlChar *)NODEOUTPUTS)) {
+std::cout<<"adding to the node "<< _cur->name <<'\n';
+temp->add(parseSlot(_doc, _cur));
+}
+_cur = _cur->next;
 
 }
+*/
 
 Slot* Parser::parseSlot(const xmlDocPtr &_doc, xmlNodePtr _cur)
 {
+	std::cout<<"adding to the node "<< _cur->name <<'\n';
+	Slot *s = 0;
 	xmlChar *name,*type, *var; 
-	Slot *temp = 0;
-	_cur = _cur->xmlChildrenNode;
-	while(_cur != NULL) {
-		if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOT)) {
-			name = parseElement(_doc, _cur, "name");
-			type = parseElement(_doc, _cur,  "type");
-			var = parseElement(_doc, _cur,  "var");
-			EnumParser<SlotVar> p;
-			//bitwise or to determine whether a input or output variable
-			temp = new Slot(
-					(const char*)name,
-					p.parseEnum((const char*)type) |
-					p.parseEnum((const char*)var)
-					);
+	name = parseElement(_doc, _cur, "name");
+	type = parseElement(_doc, _cur,  "type");
+	var = parseElement(_doc, _cur,  "var");
+	EnumParser<SlotVar> p;
+	//bitwise or to determine whether a input or output variable
+	s = new Slot(
+			(const char*)name,
+			p.parseEnum((const char*)type) |
+			p.parseEnum((const char*)var)
+			);
 
-		}
-		_cur = _cur->next;
-	}
 	xmlFree(name);
 	xmlFree(type);
 	xmlFree(var);
-	return temp;
+	_cur = _cur->next;
+	return s;
 }
-
 xmlChar* Parser::parseAttribute(xmlNodePtr _cur, const char* _key)
 {
 	xmlChar *key;

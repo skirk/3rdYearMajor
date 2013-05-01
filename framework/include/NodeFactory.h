@@ -37,7 +37,7 @@ class NodeFactory
 		 *
 		 * 
 		 */
-		Node *createNode(const std::string &_name, const NodeType&);
+		Node *createNode(const std::string &_name, const nodeType&);
 
 	private:
 		DataBase *m_db;

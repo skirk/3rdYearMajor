@@ -11,8 +11,12 @@ class Slot;
 
 class Connection
 {
-	Slot *m_lhs;
-	Slot *m_rhs;
+	private:
+		Slot *m_lhs;
+		Slot *m_rhs;
+
+	public:
+		Connection(Slot *_lhs, Slot *_rhs);
 };
 
 #endif

@@ -30,88 +30,89 @@ DataBase *NodeFactory::getDB()
 	return m_db; 
 }
 
-Node *NodeFactory::createNode(const std::string &_name,  const NodeType &_type)
+Node *NodeFactory::createNode(const std::string &_name,  const nodeType &_type)
 {
-	Node* n = m_db->getNode(_name);
-	if(n->getName() == "empty")
+	Node* n = m_db->get(_name);
+	//if Node exits return it
+	if(n->getName() != "empty")
 	{
-		std::cout<<"empty\n";
+		return n;
 	}
+
 	switch(_type)
 	{
-		case NodeType::GRAPH:
+		case nodeType::GRAPH:
 			n = new Graph(m_db);
 			break;
-		case NodeType::STATE:
+		case nodeType::STATE:
 			std::cout<<"STATE"<<'\n';
 			break;
-		case NodeType::EXPRESSION:
+		case nodeType::EXPRESSION:
 			std::cout<<"EXPRESSION\n";
 			break;
 	}
 	return n;
-	}
+}
 
-	void NodeFactory::InitDB()
+void NodeFactory::InitDB()
+{
+	std::unique_ptr <Parser> p(new Parser());
+	std::unique_ptr <FileInterface <xmlDocPtr> > file(new FileInterface<xmlDocPtr>());
+	std::vector<xmlDocPtr> docvec = file->loadFolder(xmlParseFile, "nodes/nodes");
+	xmlDocPtr schema = file->loadFile(xmlParseFile, "nodes/schemas/schema.xml");
+
+	xmlNodePtr cur;
+	for(unsigned int i = 0; i < docvec.size(); i++)
 	{
-		std::unique_ptr <Parser> p(new Parser());
-		std::unique_ptr <FileInterface <xmlDocPtr> > file(new FileInterface<xmlDocPtr>());
-		std::vector<xmlDocPtr> docvec = file->loadFolder(xmlParseFile, "nodes/nodes");
-		xmlDocPtr schema = file->loadFile(xmlParseFile, "nodes/schemas/schema.xml");
-
-		xmlNodePtr cur;
-		for(unsigned int i = 0; i < docvec.size(); i++)
+		if (p->validateAgainstSchema(docvec[i], schema) == 1);
 		{
-			if (p->validateAgainstSchema(docvec[i], schema) == 1);
-			{
-				cur = xmlDocGetRootElement(docvec[i]);
-				while(cur != NULL) {
-					if(!xmlStrcmp(cur->name, (const xmlChar *)NODE))
-					{
-						addNodeToDB(docvec[i], cur);
-					}
-					cur = cur->next;
+			cur = xmlDocGetRootElement(docvec[i]);
+			while(cur != NULL) {
+				if(!xmlStrcmp(cur->name, (const xmlChar *)NODE))
+				{
+					addNodeToDB(docvec[i], cur);
 				}
+				cur = cur->next;
 			}
-			xmlFreeDoc(docvec[i]);
 		}
-
-		xmlFreeDoc(schema);
+		xmlFreeDoc(docvec[i]);
 	}
 
-	void NodeFactory::addNodeToDB(xmlDocPtr _doc, xmlNodePtr _cur) const
+	xmlFreeDoc(schema);
+}
+
+void NodeFactory::addNodeToDB(xmlDocPtr _doc, xmlNodePtr _cur) const
+{
+	std::unique_ptr <Parser> p (new Parser());
+	xmlChar *name = p->parseAttribute(_cur, NAME);
+	xmlChar *key = p->parseAttribute(_cur, SHEET);
+	if (key==NULL)
 	{
-		std::unique_ptr <Parser> p (new Parser());
-		xmlChar *name = p->parseAttribute(_cur, NAME);
-		xmlChar *key = p->parseAttribute(_cur, SHEET);
-		if (key==NULL)
+		if(name==NULL)
 		{
-			if(name==NULL)
-			{
-				std::cout<<"Unknown node\n";
-				xmlFree(name);
-				return;
-			}
-			std::cout<<"Node "<<name<<" doesn't have a stylesheet"<<'\n';
+			std::cout<<"Unknown node\n";
 			xmlFree(name);
 			return;
 		}
-		FileInterface<xmlDocPtr> *file = new FileInterface<xmlDocPtr>();
-		file->changeContext("nodes/stylesheets/");
-		if (file->loadFile(xmlParseFile, (const char*)key) == NULL)
-		{
-			std::cout<<"Failed to parse "<<name<<"'s stylesheet"<<'\n';
-			xmlFree(name);
-			xmlFree(key);
-			return;
-
-		}
-		std::cout<<"keyword: "<<key<<'\n';
-
-		m_db->addNode(p->parseNode(_doc, _cur));
-
+		std::cout<<"Node "<<name<<" doesn't have a stylesheet"<<'\n';
+		xmlFree(name);
+		return;
+	}
+	FileInterface<xmlDocPtr> *file = new FileInterface<xmlDocPtr>();
+	file->changeContext("nodes/stylesheets/");
+	if (file->loadFile(xmlParseFile, (const char*)key) == NULL)
+	{
+		std::cout<<"Failed to parse "<<name<<"'s stylesheet"<<'\n';
 		xmlFree(name);
 		xmlFree(key);
-
+		return;
 
 	}
+	std::cout<<"keyword: "<<key<<'\n';
+
+	m_db->add(p->parseNode(_doc, _cur));
+
+	xmlFree(name);
+	xmlFree(key);
+
+}

@@ -9,10 +9,13 @@
 #include <vector>
 #include <string>
 #include "Enum.h"
+#include "Container.h"
+#include "Slot.h"
 
-class Slot;
+//class Slot;
 
-class Node {
+class Node : public Container<Slot>
+{
 	protected:
 		//! id of the node
 		int m_id;
@@ -20,19 +23,19 @@ class Node {
 		std::string m_name;
 		//! type
 		nodeType m_type;
-		//! inputSlots
-		std::vector<Slot*> m_inputSlots;
-		//! outputSlots
-		std::vector<Slot*> m_outputSlots;
+		//! slots
+		//std::vector<Slot*> m_slots;
 
 	public:
 		Node();
 		virtual	~Node();
-		std::string getName() const;
+		//virtual Node *clone() const;
+
 		void setName(const std::string &_name); 
-		virtual Node *clone() const;
-		void addInputSlot(const Slot&);
-		void addOutputSlot(const Slot&);
+		std::string getName() const;
+
+		//void addSlot(Slot*);
+		//Slot* getSlot(const std::string &_name);
 };
 
 #endif

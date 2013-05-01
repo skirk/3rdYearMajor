@@ -21,7 +21,7 @@ class Parser
 		//! Few variables to store document constants
 		//@{
 		static const char* NODESLOT;
-		static const char* NODEINPUTS;
+		static const char* NODESLOTS;
 		static const char* NODEOUTPUTS;
 		//@}
 	public:

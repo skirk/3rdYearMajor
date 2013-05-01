@@ -2,16 +2,16 @@
 #define _ENUM_H_
 
 enum class SlotVar {
-	BOOLEAN = 0x0001,
-	INT = 0x0002,
-	FLOAT = 0x0003,
-	VEC3 = 0x004,
-	VEC4 = 0x005,
-	MAT3 = 0x006,
-	MAT4 = 0x007,
+	BOOLEAN = 1<<0,
+	INT = 1 <<1,
+	FLOAT = 1<<2,
+	VEC3 = 1 <<3,
+	VEC4 = 1 <<4,
+	MAT3 = 1 <<5,
+	MAT4 = 1 <<6,
 
-	INPUT = 0x1000,
-	OUTPUT = 0X2000
+	INPUT = 1<<7,
+	OUTPUT = 1<<8
 };
 
 enum class nodeType {
@@ -28,4 +28,9 @@ operator|(SlotVar __x, SlotVar __y)
 		(static_cast<int>(__x) | static_cast<int>(__y));
 }
 
+inline const bool
+operator&(SlotVar __x, SlotVar __y)
+{
+	return (static_cast<int>(__x) & static_cast<int>(__y));
+}
 #endif
