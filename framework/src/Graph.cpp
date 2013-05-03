@@ -52,10 +52,6 @@ Node *Graph::getNode(const std::string &_name)
 }
 
 
-void Graph::exportXML()
-{
-
-
 /*
 Graph::NodeMap::iterator Graph::begin()
 {

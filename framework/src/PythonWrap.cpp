@@ -1,6 +1,7 @@
 #include "Graph.h"
 #include "Node.h"
 #include "DataBase.h"
+#include "Exporter.h"
 #include "NodeFactory.h"
 #include <boost/python.hpp>
 
@@ -85,6 +86,9 @@ BOOST_PYTHON_MODULE(Framework)
 		;
 	class_<Slot>("Slot", no_init)
 		.def(self_ns::str(self))
+		;
+	class_<XMLExporter>("Exporter")
+		.def("writeNode", &XMLExporter::writeNode)
 		;
 	to_python_converter<Node *, convert_node_ptr>();
 	to_python_converter<Slot *, convert_slot_ptr>();
