@@ -1,33 +1,33 @@
 #include "Slot.h"
 #include "Enum.h"
 
-Slot::Slot()
+BaseSlot::BaseSlot()
 	:m_name("empty")
 {
 }
 
-Slot::~Slot()
+BaseSlot::~BaseSlot()
 {
 }
 
-Slot::Slot(const char *_name, const SlotVar &_var)
+BaseSlot::BaseSlot(const char *_name, const SVariable &_var)
 	:m_name(_name), m_var(_var)
 {
 }
 
-Slot& Slot::operator=(const Slot& _other)
+BaseSlot& BaseSlot::operator=(const BaseSlot& _other)
 {
-	m_override = _other.m_override;
 	m_name = _other.m_name;
 	m_var = _other.m_var;
 	return *this;
 }
 
-std::string Slot::getName() const
+std::string BaseSlot::getName() const
 {
 	return m_name;
 }
-SlotVar Slot::getVar() const
+
+bool BaseSlot::isInput() const
 {
-	return m_var;
+	return !(m_type & Stype::input); 
 }

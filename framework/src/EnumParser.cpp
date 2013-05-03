@@ -2,15 +2,13 @@
 #include "Enum.h"
 
 template <>
-EnumParser<SlotVar>::EnumParser()
+EnumParser<SVariable>::EnumParser()
 {
-	enumMap["boolean"] = SlotVar::BOOLEAN;
-	enumMap["int"] = SlotVar::INT;
-	enumMap["float"] = SlotVar::FLOAT;
-	enumMap["vec3"] =SlotVar::VEC3;
-	enumMap["vec4"] = SlotVar::VEC4;
-	enumMap["mat3"] = SlotVar::MAT3;
-	enumMap["mat4"] = SlotVar::MAT4;
-	enumMap["input"] = SlotVar::INPUT;
-	enumMap["output"] = SlotVar::OUTPUT;
+	enumMap["boolean"] = SVariable::BOOLEAN;
+	enumMap["int"] = SVariable::INT;
+	enumMap["float"] = SVariable::FLOAT;
+	enumMap["vec3"] =SVariable::VEC3;
+	enumMap["vec4"] = SVariable::VEC4;
+	enumMap["mat3"] = SVariable::MAT3;
+	enumMap["mat4"] = SVariable::MAT4;
 }

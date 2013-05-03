@@ -13,7 +13,7 @@
 
 
 class Node;
-class Slot;
+class BaseSlot;
 
 class Parser
 {
@@ -36,7 +36,7 @@ class Parser
 		 * \param _doc document to parse
 		 * \param _node node structure to iterate through
 		 */
-		Slot* parseSlot(const xmlDocPtr &_doc, xmlNodePtr _node);
+		BaseSlot* parseSlot(const xmlDocPtr &_doc, xmlNodePtr _node);
 		/*! \brief Parse a attribute out of node if any
 		 * 
 		 * \param _cur node to parse

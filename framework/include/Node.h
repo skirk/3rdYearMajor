@@ -12,9 +12,7 @@
 #include "Container.h"
 #include "Slot.h"
 
-//class Slot;
-
-class Node : public Container<Slot>
+class Node : public Container<BaseSlot>
 {
 	protected:
 		//! id of the node
@@ -23,8 +21,6 @@ class Node : public Container<Slot>
 		std::string m_name;
 		//! type
 		nodeType m_type;
-		//! slots
-		//std::vector<Slot*> m_slots;
 
 	public:
 		Node();
@@ -33,6 +29,8 @@ class Node : public Container<Slot>
 
 		void setName(const std::string &_name); 
 		std::string getName() const;
+
+		virtual void write(const std::string &_file);
 
 		//void addSlot(Slot*);
 		//Slot* getSlot(const std::string &_name);

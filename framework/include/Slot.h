@@ -10,29 +10,40 @@
 #include <string>
 #include "Enum.h"
 
-class Slot {
+enum class Stype {
+	input = 1<<0,
+	output= 1<<1
+};
 
-	private:
-		bool m_override;
+inline const bool
+operator&(Stype __x, Stype __y)
+{
+	return (static_cast<int>(__x) & static_cast<int>(__y));
+}
+
+class BaseSlot {
+
+	protected:
 		std::string m_name;
-		SlotVar m_var;
+		Stype m_type;
+		SVariable m_var;
+
 	public:
-		Slot(const char *_name, const SlotVar &_var);
-		Slot();
-		~Slot();
+		BaseSlot(const char *_name, const SVariable &_var);
+		BaseSlot();
+		virtual ~BaseSlot();
 		/*! \brief assignment operator
 		 * 
 		 * \param _other Slot to assign from
 		 */
-		Slot &operator=(const Slot &_other);
+		BaseSlot &operator=(const BaseSlot &_other);
 		/*! \brief Constructor
 		 *
 		 * \param _name Name of the slot
 		 * \param _var Type of the variable
 		 */
 		std::string getName() const;
-		SlotVar getVar() const;
-
+		bool isInput() const;
 
 };
 

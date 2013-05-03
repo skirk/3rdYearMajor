@@ -1,5 +1,6 @@
 #include "Graph.h"
 #include "DataBase.h"
+#include "Input.h"
 #include "Connection.h"
 #include <boost/tokenizer.hpp>
 #include <iostream>
@@ -22,15 +23,42 @@ void Graph::connectNodes(const std::string &_lhs, const std::string &_rhs)
 
 	Node *lhs = getNode(lnode);
 	if(lhs->getName()=="empty")
+	{
 		std::cout<<"lhs is empty\n";
-
+		return;
+	}
 	Node *rhs = getNode(rnode);
 	if(rhs->getName()=="empty")
+	{
 		std::cout<<"rhs is empty\n";
+		return;
+	}
 
-	m_connections.push_back(new Connection(lhs->get(lslot), rhs->get(rslot)));
-
+	if(!(rhs->get(rslot)->isInput() ^ lhs->get(lslot)->isInput()))
+	{
+		//could do with better solution
+		if(lhs->get(lslot)->isInput())
+		{
+			Input *i1 = (Input*)lhs->get(lslot);
+			Output *o1 = (Output*)rhs->get(rslot);
+			i1->linkToOutput(*o1);
+		}
+		else
+		{
+			Input *i1 = (Input*)rhs->get(rslot);
+			Output *o1 = (Output*)lhs->get(lslot);
+			i1->linkToOutput(*o1);
+		}
+		std::cout<<"connection formed!"<<'\n';
+		return;
+	}
+	else
+	{
+		std::cout<<"connection invalid\n";
+		return;
+	}
 }
+
 void Graph::addNode(const std::string &_name)
 {
 	m_nodes.push_back(m_db->get(_name));
@@ -53,13 +81,20 @@ Node *Graph::getNode(const std::string &_name)
 
 
 /*
-Graph::NodeMap::iterator Graph::begin()
-{
-	return m_nodes.begin();
-}
+   Graph::NodeMap::iterator Graph::begin()
+   {
+   return m_nodes.begin();
+   }
 
-Graph::NodeMap::iterator Graph::end()
-{
-	return m_nodes.end();
-}
+   Graph::NodeMap::iterator Graph::end()
+   {
+   return m_nodes.end();
+   }
+
+   Slot *Graph::searchOutputToInput(const std::string &_name)
+   {
+   std::vector<Connection*>::iterator it;
+   for(it = m_connections.begin() 
+   }
+
 */

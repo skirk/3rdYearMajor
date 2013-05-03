@@ -1,8 +1,11 @@
 #include "Parser.h"
 #include "Node.h"
 #include "Slot.h"
+#include "Input.h"
+#include "Output.h"
 #include "EnumParser.h"
 #include "Enum.h"
+#include <cstring>
 #include <libxml/xmlschemas.h>
 #include <iostream>
 
@@ -47,21 +50,33 @@ _cur = _cur->next;
 }
 */
 
-Slot* Parser::parseSlot(const xmlDocPtr &_doc, xmlNodePtr _cur)
+BaseSlot* Parser::parseSlot(const xmlDocPtr &_doc, xmlNodePtr _cur)
 {
 	std::cout<<"adding to the node "<< _cur->name <<'\n';
-	Slot *s = 0;
+	BaseSlot *s = 0;
 	xmlChar *name,*type, *var; 
 	name = parseElement(_doc, _cur, "name");
 	type = parseElement(_doc, _cur,  "type");
 	var = parseElement(_doc, _cur,  "var");
-	EnumParser<SlotVar> p;
+	EnumParser<SVariable> p;
 	//bitwise or to determine whether a input or output variable
-	s = new Slot(
+	if(strcmp((const char*)type, "input"))
+		s = new Input(
+				(const char*)name,
+				p.parseEnum((const char*)type)
+				);
+	else 
+		s = new Output(
+				(const char*)name,
+				p.parseEnum((const char*)type)
+				);
+	/*
+	s = new BaseSlot(
 			(const char*)name,
 			p.parseEnum((const char*)type) |
 			p.parseEnum((const char*)var)
 			);
+			*/
 
 	xmlFree(name);
 	xmlFree(type);

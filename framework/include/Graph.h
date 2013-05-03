@@ -10,11 +10,11 @@
 
 #include "Node.h"
 #include <vector>
+#include <map>
 #include <string>
 
 class DataBase;
 class Connection;
-class Slot;
 
 class Graph : public Node
 {
@@ -34,7 +34,6 @@ class Graph : public Node
 		 *
 		 *  Successful connections inside the Graph
 		 */
-		std::vector<Connection*> m_connections;
 	private:
 		Node *getNode(const std::string &_name);
 	public:
@@ -66,9 +65,6 @@ class Graph : public Node
 		 * This method is used by PythonWrapper to iterate through the vector
 		 */
 		NodeVec::iterator end();
-
-		void exportXML();
-
 
 };
 
