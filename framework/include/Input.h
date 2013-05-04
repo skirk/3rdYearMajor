@@ -10,9 +10,11 @@ class Input : public BaseSlot
 	public:
 		Input(const char *_name, const SVariable &_var); 
 		void linkToOutput(Output &_s);
+		bool isOverwritten();
 		Output *getLink();
 
 	private:
+		bool m_override;
 		Output *m_ref;
 		
 };

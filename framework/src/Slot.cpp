@@ -29,5 +29,5 @@ std::string BaseSlot::getName() const
 
 bool BaseSlot::isInput() const
 {
-	return !(m_type & Stype::input); 
+	return m_type == Stype::input; 
 }

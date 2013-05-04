@@ -25,10 +25,10 @@ class BaseSlot {
 
 	protected:
 		std::string m_name;
-		Stype m_type;
 		SVariable m_var;
 
 	public:
+		Stype m_type;
 		BaseSlot(const char *_name, const SVariable &_var);
 		BaseSlot();
 		virtual ~BaseSlot();

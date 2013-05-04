@@ -29,7 +29,7 @@ class Graph : public Node
 		 *
 		 * Nodes inside the graph
 		 */
-		NodeVec m_nodes;
+		NodeVec m_asd;
 		/*! \brief Vector of Connections
 		 *
 		 *  Successful connections inside the Graph
@@ -42,7 +42,10 @@ class Graph : public Node
 		 *  Inject dependency to a DataBase object
 		 */
 		Graph(DataBase *_db):
-			m_db(_db) {}
+			m_db(_db)
+	{
+		m_type = nodeType::GRAPH;
+	}
 		/* \brief Connect two slots together
 		 *
 		 * \param _lhs left hand side Slot
@@ -54,17 +57,18 @@ class Graph : public Node
 		 * \param _name name of the node to add
 		 */
 		void addNode(const std::string &_name);
-		
+
 		/* \brief Returns and iterator to the first element of m_nodes vector.
 		 *
 		 * This method is used by PythonWrapper to iterate through the vector
 		 */
-		NodeVec::iterator begin();
+		NodeVec::iterator NodeBegin();
 		/* \brief Returns and iterator to the last element of m_nodes vector.
 		 *
 		 * This method is used by PythonWrapper to iterate through the vector
 		 */
-		NodeVec::iterator end();
+		NodeVec::iterator NodeEnd();
+		typedef NodeVec::iterator nodeiterator;
 
 };
 

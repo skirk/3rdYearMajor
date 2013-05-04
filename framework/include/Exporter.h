@@ -6,7 +6,7 @@ class Node;
 class XMLExporter
 {
 	public:
-		void writeNode(Node _n, const std::string &_file);
+		void writeNode(Node *_n, const std::string &_file);
 };
 
 #endif

@@ -61,13 +61,13 @@ void Graph::connectNodes(const std::string &_lhs, const std::string &_rhs)
 
 void Graph::addNode(const std::string &_name)
 {
-	m_nodes.push_back(m_db->get(_name));
+	m_asd.push_back(m_db->get(_name));
 }	
 
 Node *Graph::getNode(const std::string &_name)
 {
 	NodeVec::iterator it;
-	for (it = m_nodes.begin(); it != m_nodes.end(); ++it)
+	for (it = m_asd.begin(); it != m_asd.end(); ++it)
 	{
 		Node *n = *it;
 		if(n->getName() == _name)
@@ -80,21 +80,21 @@ Node *Graph::getNode(const std::string &_name)
 }
 
 
-/*
-   Graph::NodeMap::iterator Graph::begin()
-   {
-   return m_nodes.begin();
-   }
+Graph::NodeVec::iterator Graph::NodeBegin()
+{
+	return m_asd.begin();
+}
 
-   Graph::NodeMap::iterator Graph::end()
-   {
-   return m_nodes.end();
-   }
+Graph::NodeVec::iterator Graph::NodeEnd()
+{
+	return m_asd.end();
+}
+
+/*
 
    Slot *Graph::searchOutputToInput(const std::string &_name)
    {
    std::vector<Connection*>::iterator it;
    for(it = m_connections.begin() 
-   }
 
 */

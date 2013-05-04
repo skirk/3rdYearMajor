@@ -59,18 +59,18 @@ BaseSlot* Parser::parseSlot(const xmlDocPtr &_doc, xmlNodePtr _cur)
 	type = parseElement(_doc, _cur,  "type");
 	var = parseElement(_doc, _cur,  "var");
 	EnumParser<SVariable> p;
-	//bitwise or to determine whether a input or output variable
-	if(strcmp((const char*)type, "input"))
+	if(!strcmp((const char*)type, "input"))
 		s = new Input(
 				(const char*)name,
-				p.parseEnum((const char*)type)
+				p.parseEnum((const char*)var)
 				);
 	else 
 		s = new Output(
 				(const char*)name,
-				p.parseEnum((const char*)type)
+				p.parseEnum((const char*)var)
 				);
 	/*
+	//bitwise or to determine whether a input or output variable
 	s = new BaseSlot(
 			(const char*)name,
 			p.parseEnum((const char*)type) |

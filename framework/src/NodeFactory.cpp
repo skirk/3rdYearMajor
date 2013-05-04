@@ -42,6 +42,7 @@ Node *NodeFactory::createNode(const std::string &_name,  const nodeType &_type)
 	switch(_type)
 	{
 		case nodeType::GRAPH:
+			std::cout<<"constructing new node"<<'\n';
 			n = new Graph(m_db);
 			break;
 		case nodeType::STATE:

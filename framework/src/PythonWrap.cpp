@@ -14,12 +14,15 @@ std::ostream &operator<<(std::ostream &os, const Node &_n)
 
 std::ostream &operator<<(std::ostream &os, const BaseSlot &_s)
 {
+	std::cout<<_s.isInput()<<'\n';
 	if(_s.isInput())
-		os << _s.getName() << " INPUT";
+		//os << _s.getName() << " INPUT";
+		os << _s.getName()<<" "<<static_cast<int>(_s.m_type) << " INPUT";
 	else
-		os << _s.getName() << " OUTPUT";
+		os << _s.getName()<<" "<<static_cast<int>(_s.m_type) << " OUTPUT";
 	return os;
 }
+
 
 struct convert_node_ptr
 {

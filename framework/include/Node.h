@@ -30,6 +30,8 @@ class Node : public Container<BaseSlot>
 		void setName(const std::string &_name); 
 		std::string getName() const;
 
+		nodeType getType();
+
 		virtual void write(const std::string &_file);
 
 		//void addSlot(Slot*);

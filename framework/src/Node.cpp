@@ -17,6 +17,7 @@ Node::~Node()
 
 void Node::write(const std::string &_file)
 {
+	/*
 	int rc;
 	xmlTextWriterPtr writer;
 	xmlDocPtr doc;
@@ -36,12 +37,19 @@ void Node::write(const std::string &_file)
 			xmlTextWriterWriteAttribute(writer, BAD_CAST "type", BAD_CAST "asd");
 			xmlTextWriterWriteAttribute(writer, BAD_CAST "var", BAD_CAST "asd");
 
-			rc = xmlTextWriterStartElement(writer, BAD_CAST "source");
-			Output *out = ((Input*)(*i))->getLink();
-			//const char* c = out->getName().c_str();
-			//std::cout<<c<<'\n';
-		//	xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST (const xmlChar*));
-			rc = xmlTextWriterEndElement(writer);
+			Input* in = dynamic_cast<Input*>(*i);
+			bool test = in->isOverwritten();
+			std::cout<<test<<'\n';
+			if (in->isOverwritten())
+			{
+				rc = xmlTextWriterStartElement(writer, BAD_CAST "source");
+				Output *out = in->getLink();
+				xmlTextWriterWriteAttribute(writer, BAD_CAST "type", BAD_CAST out->getName().c_str());
+				std::string c = out->getName();
+				std::cout<<c<<'\n';
+				rc = xmlTextWriterEndElement(writer);
+			}
+			//	xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST (const xmlChar*));
 		}
 		rc = xmlTextWriterEndElement(writer);
 		//rc = xmlTextWriterEndElement(writer);
@@ -58,8 +66,8 @@ void Node::write(const std::string &_file)
 	xmlCleanupParser();
 	xmlMemoryDump();
 
+*/
 }
-
 /*
    Slot *Node::getSlot(const std::string &_name)
    {
@@ -98,3 +106,7 @@ void Node::setName(const std::string &_name)
 	m_name = _name;
 }
 
+nodeType Node::getType()
+{
+	return m_type;
+}
