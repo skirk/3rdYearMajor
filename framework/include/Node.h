@@ -25,10 +25,14 @@ class Node : public Container<BaseSlot>
 	public:
 		Node();
 		virtual	~Node();
+		Node(const Node&);
 		//virtual Node *clone() const;
 
 		void setName(const std::string &_name); 
 		std::string getName() const;
+
+		void setID(int _id);
+		std::string getID() const;
 
 		nodeType getType();
 

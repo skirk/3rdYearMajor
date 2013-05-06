@@ -95,7 +95,7 @@ void NodeFactory::addNodeToDB(xmlDocPtr _doc, xmlNodePtr _cur) const
 			xmlFree(name);
 			return;
 		}
-		std::cout<<"Node "<<name<<" doesn't have a stylesheet"<<'\n';
+		//std::cout<<"Node "<<name<<" doesn't have a stylesheet"<<'\n';
 		xmlFree(name);
 		return;
 	}
@@ -103,13 +103,13 @@ void NodeFactory::addNodeToDB(xmlDocPtr _doc, xmlNodePtr _cur) const
 	file->changeContext("nodes/stylesheets/");
 	if (file->loadFile(xmlParseFile, (const char*)key) == NULL)
 	{
-		std::cout<<"Failed to parse "<<name<<"'s stylesheet"<<'\n';
+		//std::cout<<"Failed to parse "<<name<<"'s stylesheet"<<'\n';
 		xmlFree(name);
 		xmlFree(key);
 		return;
 
 	}
-	std::cout<<"keyword: "<<key<<'\n';
+	//std::cout<<"keyword: "<<key<<'\n';
 
 	m_db->add(p->parseNode(_doc, _cur));
 

@@ -17,9 +17,9 @@ std::ostream &operator<<(std::ostream &os, const BaseSlot &_s)
 	std::cout<<_s.isInput()<<'\n';
 	if(_s.isInput())
 		//os << _s.getName() << " INPUT";
-		os << _s.getName()<<" "<<static_cast<int>(_s.m_type) << " INPUT";
+		os << _s.getName()<<" "<<static_cast<int>(_s.getType()) << " INPUT";
 	else
-		os << _s.getName()<<" "<<static_cast<int>(_s.m_type) << " OUTPUT";
+		os << _s.getName()<<" "<<static_cast<int>(_s.getType()) << " OUTPUT";
 	return os;
 }
 
@@ -76,17 +76,19 @@ BOOST_PYTHON_MODULE(Framework)
 		.def(self_ns::str(self))
 		.def("__iter__", iterator<Node>())
 		.def("write", &Node::write)
-	;
-	class_<Graph, bases<Node>>("Graph", no_init)
+		;
+	class_<Graph, bases<Node>, boost::noncopyable>("Graph", no_init)
 		.def(init<DataBase*>())
 		.def("connectNodes", &Graph::connectNodes)
 		.def("addNode", &Graph::addNode)
 		;
-	class_<BaseSlot>("Slot", no_init)
+	class_<BaseSlot, boost::noncopyable>("Slot", no_init)
 		.def(self_ns::str(self))
 		;
 	class_<XMLExporter>("Exporter")
 		.def("writeNode", &XMLExporter::writeNode)
+		.def("open", &XMLExporter::open)
+		.def("close", &XMLExporter::close)
 		;
 	to_python_converter<Node *, convert_node_ptr>();
 	to_python_converter<BaseSlot *, convert_slot_ptr>();

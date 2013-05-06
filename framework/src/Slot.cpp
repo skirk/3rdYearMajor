@@ -10,6 +10,13 @@ BaseSlot::~BaseSlot()
 {
 }
 
+BaseSlot::BaseSlot(const BaseSlot &_other)
+{
+	m_name = _other.m_name;
+	m_var = _other.m_var;
+	m_type = _other.m_type;
+}
+
 BaseSlot::BaseSlot(const char *_name, const SVariable &_var)
 	:m_name(_name), m_var(_var)
 {
@@ -27,7 +34,17 @@ std::string BaseSlot::getName() const
 	return m_name;
 }
 
+Stype BaseSlot::getType() const
+{
+	return m_type;
+}
+
 bool BaseSlot::isInput() const
 {
 	return m_type == Stype::input; 
+}
+
+BaseSlot *BaseSlot::clone()
+{
+	return new BaseSlot(*this);
 }

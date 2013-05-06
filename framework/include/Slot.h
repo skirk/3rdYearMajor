@@ -24,26 +24,37 @@ operator&(Stype __x, Stype __y)
 class BaseSlot {
 
 	protected:
+		//! \brief Name of the slot
 		std::string m_name;
+		//! \brief Variable of the slot
 		SVariable m_var;
+		//! \brief Type of the slot (input or output)
+		Stype m_type;
 
 	public:
-		Stype m_type;
+		/*! \brief Constructor
+		 *
+		 * \param _name Name of the slot
+		 * \param _var Type of the variable
+		 */
 		BaseSlot(const char *_name, const SVariable &_var);
+		//! \brief default constructor
 		BaseSlot();
+		BaseSlot(const BaseSlot&);
 		virtual ~BaseSlot();
 		/*! \brief assignment operator
 		 * 
 		 * \param _other Slot to assign from
 		 */
 		BaseSlot &operator=(const BaseSlot &_other);
-		/*! \brief Constructor
-		 *
-		 * \param _name Name of the slot
-		 * \param _var Type of the variable
-		 */
+		//! \brief get Name of the Slot
 		std::string getName() const;
+		//! \brief get Type of the Slot
+		Stype getType() const;
+		//! \brief Check whether the slot is input
 		bool isInput() const;
+		//! \brief Prototype pattern
+		virtual BaseSlot *clone();
 
 };
 

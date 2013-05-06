@@ -22,10 +22,9 @@ Node* Parser::parseNode(const xmlDocPtr &_doc, xmlNodePtr _cur)
 	while(_cur != NULL) {
 		if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOTS)) {
 			xmlNodePtr _cur2 = _cur->xmlChildrenNode;
-			std::cout<<"in slots "<< _cur->name <<'\n';
 			while(_cur2 != NULL) {
 				if(!xmlStrcmp(_cur2->name, (const xmlChar *)NODESLOT)) {
-					temp->add(parseSlot(_doc, _cur2));
+					temp->add(parseSlot(temp, _doc, _cur2));
 				}
 			_cur2 = _cur2->next;
 			}
@@ -50,9 +49,9 @@ _cur = _cur->next;
 }
 */
 
-BaseSlot* Parser::parseSlot(const xmlDocPtr &_doc, xmlNodePtr _cur)
+BaseSlot* Parser::parseSlot(Node *_in,const xmlDocPtr &_doc, xmlNodePtr _cur)
 {
-	std::cout<<"adding to the node "<< _cur->name <<'\n';
+//	std::cout<<"adding to the node "<< _cur->name <<'\n';
 	BaseSlot *s = 0;
 	xmlChar *name,*type, *var; 
 	name = parseElement(_doc, _cur, "name");
@@ -66,6 +65,7 @@ BaseSlot* Parser::parseSlot(const xmlDocPtr &_doc, xmlNodePtr _cur)
 				);
 	else 
 		s = new Output(
+				_in,
 				(const char*)name,
 				p.parseEnum((const char*)var)
 				);
@@ -100,7 +100,7 @@ xmlChar* Parser::parseElement(const xmlDocPtr &_doc, xmlNodePtr _cur, const char
 	while (_cur != NULL) {
 		if ((!xmlStrcmp(_cur->name, (const xmlChar *)_key))) {
 			key = xmlNodeListGetString(_doc, _cur->xmlChildrenNode, 1);
-			printf("keyword: %s\n", key);
+			//printf("k'eyword: %s\n", key);
 		}
 		_cur = _cur->next;
 	}
@@ -112,7 +112,7 @@ void Parser::printElementNames(xmlNodePtr _cur)
 	xmlNode *cur_node = NULL;
 	for (cur_node = _cur; cur_node; cur_node = cur_node->next) {
 		if (cur_node->type == XML_ELEMENT_NODE) {
-			std::cout<<"nodename "<< cur_node->name <<'\n';
+			//std::cout<<"nodename "<< cur_node->name <<'\n';
 		}
 		printElementNames(cur_node->children);
 	}

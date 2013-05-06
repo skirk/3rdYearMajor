@@ -7,8 +7,11 @@ Input::Input(const char *_name, const SVariable &_var) :
 	m_override(false)
 	//BaseSlot::m_type(Stype::input)
 {
-	std::cout<<"Input constructor called"<<'\n';
 	m_type = Stype::input;
+}
+
+Input::~Input()
+{
 }
 
 void Input::linkToOutput(Output &_s)
@@ -27,3 +30,7 @@ bool Input::isOverwritten()
 	return m_override;
 }
 
+Input *Input::clone()
+{
+	return new Input(*this);
+}

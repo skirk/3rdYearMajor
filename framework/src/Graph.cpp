@@ -1,79 +1,137 @@
 #include "Graph.h"
 #include "DataBase.h"
 #include "Input.h"
+#include "Output.h"
 #include "Connection.h"
 #include <boost/tokenizer.hpp>
 #include <iostream>
 
 void Graph::connectNodes(const std::string &_lhs, const std::string &_rhs)
 {
-	boost::tokenizer<> ltok(_lhs);
-	boost::tokenizer<>::iterator lbeg = ltok.begin();
 
-	std::string lnode = *lbeg;
-	std::string lslot = *++lbeg;
-	std::cout<<"tokenizer : "<<lnode<<'\t'<<lslot<<'\n';
-
-	boost::tokenizer<> rtok(_rhs);
-	boost::tokenizer<>::iterator rbeg = rtok.begin();
-
-	std::string rnode = *rbeg;
-	std::string rslot = *++rbeg;
-	std::cout<<"tokenizer : "<<rnode<<'\t'<<rslot<<'\n';
-
-	Node *lhs = getNode(lnode);
+	BaseSlot *lhs = getSlotFromString(_lhs);
 	if(lhs->getName()=="empty")
 	{
-		std::cout<<"lhs is empty\n";
+		std::cout<<"target slot doesn't exist"<<'\n';
 		return;
 	}
-	Node *rhs = getNode(rnode);
+	BaseSlot *rhs = getSlotFromString(_rhs);
 	if(rhs->getName()=="empty")
 	{
-		std::cout<<"rhs is empty\n";
+		std::cout<<"source slot doesn't exist"<<'\n';
 		return;
 	}
 
-	if(!(rhs->get(rslot)->isInput() ^ lhs->get(lslot)->isInput()))
+	if( lhs->isInput() ^ rhs->isInput())
 	{
 		//could do with better solution
-		if(lhs->get(lslot)->isInput())
+		if(lhs->isInput())
 		{
-			Input *i1 = (Input*)lhs->get(lslot);
-			Output *o1 = (Output*)rhs->get(rslot);
+			Input *i1 = dynamic_cast<Input*>(lhs);
+			if(i1==NULL)
+			{
+				std::cout<<"couldn't convert Slot to Input\n";
+				return;
+			}
+			Output *o1 = dynamic_cast<Output*>(rhs);
+			if(o1==NULL)
+			{
+				std::cout<<"couldn't convert Slot to Output\n";
+				return;
+			}
 			i1->linkToOutput(*o1);
+			std::cout<<"connection formed!"<<'\n';
+			return;
 		}
-		else
+		else if (rhs->isInput())
 		{
-			Input *i1 = (Input*)rhs->get(rslot);
-			Output *o1 = (Output*)lhs->get(lslot);
+			Input *i1 = dynamic_cast<Input*>(rhs);
+			if(i1==NULL)
+			{
+				std::cout<<"in else couldn't convert Slot to Input\n";
+				return;
+			}
+			Output *o1 = dynamic_cast<Output*>(lhs);
+			if(o1==NULL)
+			{
+				std::cout<<"couldn't convert Slot to Output\n";
+				return;
+			}
 			i1->linkToOutput(*o1);
+			std::cout<<"connection formed!"<<'\n';
+			return;
 		}
-		std::cout<<"connection formed!"<<'\n';
-		return;
 	}
 	else
 	{
 		std::cout<<"connection invalid\n";
 		return;
 	}
+	std::cout<<"connection not formed\n";
 }
 
 void Graph::addNode(const std::string &_name)
 {
-	m_asd.push_back(m_db->get(_name));
+	int id = 0;
+	std::cout<<"adding node "<< _name <<'\n';
+	while(getNode(_name, id)->getName() != "empty")
+	{
+		id++;
+		std::cout<<"increment "<< id <<'\n';
+	}
+	Node *n = new Node(*m_db->get(_name));
+	n->setID(id);
+	std::cout<<"node added  "<<n->getName()<<n->getID() <<'\n';
+	m_nodes.push_back(n);
+	for(unsigned int i = 0; i<m_nodes.size(); i++)
+	{
+		std::cout<<"node in vec  "<<m_nodes[i]->getName()<<m_nodes[i]->getID() <<'\n';
+	}
 }	
 
-Node *Graph::getNode(const std::string &_name)
+BaseSlot *Graph::getSlotFromString(const std::string &_name)
+{
+	boost::tokenizer<> tok(_name);
+	boost::tokenizer<>::iterator beg = tok.begin();
+
+	std::string node = *beg;
+	std::string id   = *++beg;
+	std::string slot = *++beg;
+	int i = std::stoi(id);
+	std::cout<<"tokenizer : "<<node<<'\t'<<id<<'\t'<<slot<<'\n';
+	Node *n = getNode(node, i);
+	if(n->getName()=="empty")
+	{
+		std::cout<<"Couldn't find "<<node<<"\n";
+		return new BaseSlot;
+	}
+	return n->get(slot);
+}
+
+
+Node *Graph::getNode(const std::string &_name, int _id)
 {
 	NodeVec::iterator it;
-	for (it = m_asd.begin(); it != m_asd.end(); ++it)
+
+	std::cout<<"getting node "<< _name<< _id <<'\n';
+	int its = 0;
+	for (it = m_nodes.begin(); it != m_nodes.end(); ++it)
 	{
 		Node *n = *it;
+		std::cout<<"looking at "<<n->getName()<<n->getID()<<'\n';
 		if(n->getName() == _name)
 		{
-			return n;
+			std::cout<<"name matched\n";
+			int i = std::stoi(n->getID());
+			std::cout<<i<<" "<<_id;
+			if(i == _id)
+			{
+				std::cout<<"id matched\n";
+				return n;
+			}
 		}
+		its++;
+		std::cout<<its<<'\n';
 	}
 	static Node empty;
 	return &empty;	
@@ -82,12 +140,12 @@ Node *Graph::getNode(const std::string &_name)
 
 Graph::NodeVec::iterator Graph::NodeBegin()
 {
-	return m_asd.begin();
+	return m_nodes.begin();
 }
 
 Graph::NodeVec::iterator Graph::NodeEnd()
 {
-	return m_asd.end();
+	return m_nodes.end();
 }
 
 /*

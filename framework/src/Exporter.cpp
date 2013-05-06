@@ -3,49 +3,81 @@
 #include "Graph.h"
 #include "Input.h"
 #include "Output.h"
-#include <libxml/encoding.h>
-#include <libxml/xmlwriter.h>
 #define MY_ENCODING "ISO-8859-1"
 
+/*
+ * From API m_documentation:
+ * Macro: BAD_CAST
+ * #define BAD_CAST
+ * Macro to cast a string to an xmlChar * when one know its safe.
+ */
+XMLExporter::XMLExporter()
+{
+}
 
-void XMLExporter::writeNode(Node *_n, const std::string &_file)
+void XMLExporter::open(const std::string &_filename)
+{
+	m_doc = xmlNewDoc(BAD_CAST XML_DEFAULT_VERSION);
+	m_node = xmlNewDocNode(m_doc, NULL, BAD_CAST "root", NULL);
+	xmlDocSetRootElement(m_doc, m_node);
+	m_writer = xmlNewTextWriterTree(m_doc,m_node, 0); 
+	xmlTextWriterStartDocument(m_writer, NULL, MY_ENCODING, NULL);
+	m_file = _filename;
+
+}
+void XMLExporter::close()
+{
+	xmlFreeTextWriter(m_writer);
+	xmlSaveFormatFileEnc(m_file.c_str(), m_doc, MY_ENCODING, 1); 
+	xmlCleanupParser();
+	xmlMemoryDump();
+}
+void XMLExporter::writeSlotAttributes(const std::string &_name, const std::string &_type, const std::string &_var)
+{
+	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "name", BAD_CAST _name.c_str());
+	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "type", BAD_CAST _type.c_str());
+	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "var", BAD_CAST _var.c_str());
+}
+
+void XMLExporter::writeSourceElement(const std::string &_sourcenode, const std::string &_id, const std::string &_sourceslot)
+{
+	xmlTextWriterStartElement(m_writer, BAD_CAST "source");
+	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "node", BAD_CAST _sourcenode.c_str());
+	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "id", BAD_CAST _id.c_str());
+	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "slot", BAD_CAST _sourceslot.c_str());
+	xmlTextWriterEndElement(m_writer);
+}
+
+void XMLExporter::writeNode(Node *_n)
 {
 	int rc;
-	xmlTextWriterPtr writer;
-	xmlDocPtr doc;
-	xmlNodePtr node;
-	doc = xmlNewDoc(BAD_CAST XML_DEFAULT_VERSION);
-	node = xmlNewDocNode(doc, NULL, BAD_CAST "root", NULL);
-	xmlDocSetRootElement(doc, node);
-	writer = xmlNewTextWriterTree(doc,node, 0); 
-	rc = xmlTextWriterStartDocument(writer, NULL, MY_ENCODING, NULL);
-	rc = xmlTextWriterStartElement(writer, BAD_CAST "node");
+	rc = xmlTextWriterStartElement(m_writer, BAD_CAST "node");
+	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "name", BAD_CAST _n->getName().c_str());
+	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "id", BAD_CAST _n->getID().c_str());
 	for(Node::iterator i = _n->begin(); i<_n->end(); i++)
 	{
-		rc = xmlTextWriterStartElement(writer, BAD_CAST "slot");
+		rc = xmlTextWriterStartElement(m_writer, BAD_CAST "slot");
 		if((*i)->isInput())
 		{
-			xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST "INPUT");
-			xmlTextWriterWriteAttribute(writer, BAD_CAST "type", BAD_CAST "asd");
-			xmlTextWriterWriteAttribute(writer, BAD_CAST "var", BAD_CAST "asd");
-
+			writeSlotAttributes((*i)->getName(), "input", "var");
 			Input* in = dynamic_cast<Input*>(*i);
-			bool test = in->isOverwritten();
-			std::cout<<test<<'\n';
+			if(in==NULL)
+			{
+				std::cout<<"writing input slot failed\n";
+				return;
+			}
 			if (in->isOverwritten())
 			{
-				std::cout<<"whee\n";
-				rc = xmlTextWriterStartElement(writer, BAD_CAST "source");
 				Output *out = in->getLink();
-				xmlTextWriterWriteAttribute(writer, BAD_CAST "type", BAD_CAST out->getName().c_str());
-				std::string c = out->getName();
-				std::cout<<c<<'\n';
-				rc = xmlTextWriterEndElement(writer);
+				
+				writeSourceElement(out->getParent()->getName(), out->getParent()->getID() , out->getName());
 			}
-			//	xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST (const xmlChar*));
 		}
-		rc = xmlTextWriterEndElement(writer);
-		//rc = xmlTextWriterEndElement(writer);
+		else
+		{
+			writeSlotAttributes((*i)->getName(), "output", "var");
+		}
+		rc = xmlTextWriterEndElement(m_writer);
 	}
 	if(_n->getType() == nodeType::GRAPH)
 	{
@@ -53,16 +85,10 @@ void XMLExporter::writeNode(Node *_n, const std::string &_file)
 		if (g != NULL)
 		{
 			Graph::nodeiterator it = g->NodeBegin() ; 
-			std::cout<<"inside graph writing\n";
 			for(; it != g->NodeEnd(); ++it)
-				writeNode(*it, _file);
+				writeNode(*it);
 		}
 	}
-
-	rc = xmlTextWriterEndElement(writer);
-	xmlFreeTextWriter(writer);
-
-	xmlSaveFormatFileEnc(_file.c_str(), doc, MY_ENCODING, 1); 
-	xmlCleanupParser();
-	xmlMemoryDump();
+	rc = xmlTextWriterEndElement(m_writer);
 }
+

@@ -15,6 +15,7 @@
 
 class DataBase;
 class Connection;
+class BaseSlot;
 
 class Graph : public Node
 {
@@ -29,13 +30,14 @@ class Graph : public Node
 		 *
 		 * Nodes inside the graph
 		 */
-		NodeVec m_asd;
+		NodeVec m_nodes;
 		/*! \brief Vector of Connections
 		 *
 		 *  Successful connections inside the Graph
 		 */
 	private:
-		Node *getNode(const std::string &_name);
+		Node *getNode(const std::string &_name, int id);
+		BaseSlot *getSlotFromString(const std::string &_name);
 	public:
 		/* \brief A constructor
 		 *
@@ -46,6 +48,7 @@ class Graph : public Node
 	{
 		m_type = nodeType::GRAPH;
 	}
+		Graph(const Graph&) = delete;
 		/* \brief Connect two slots together
 		 *
 		 * \param _lhs left hand side Slot

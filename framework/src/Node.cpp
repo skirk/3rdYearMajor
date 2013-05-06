@@ -3,17 +3,27 @@
 #include "Input.h"
 #include "Slot.h"
 
-#include <libxml/encoding.h>
-#include <libxml/xmlwriter.h>
-#define MY_ENCODING "ISO-8859-1"
+#include <sstream>
 
-
-Node::Node()
-	:m_name("empty")
+Node::Node() :
+	m_name("empty")
 {
+	m_id = 0;
 }
 Node::~Node()
 {}
+
+Node::Node(const Node &_n)
+{
+	m_name = _n.getName(); 
+	m_id = std::stoi(_n.getID());
+	for(iterator it =_n.begin(); it != _n.end(); it++)
+	{
+		std::cout<<"copying node slots" <<(*it)->getName()<<'\n';
+		m_elems.push_back((*it)->clone()); 
+		std::cout<<m_elems.back()->getName()<<'\n';
+	}
+}
 
 void Node::write(const std::string &_file)
 {
@@ -96,7 +106,7 @@ void Node::write(const std::string &_file)
    }
 
 */
-std::string Node::getName() const
+std::string Node::getName() const 
 {
 	return m_name;
 }
@@ -105,7 +115,18 @@ void Node::setName(const std::string &_name)
 {
 	m_name = _name;
 }
+void Node::setID(int _id)
+{
+	std::cout<<"changing from "<<m_id<<" to "<<_id<<'\n';
+	m_id = _id;
+}
 
+std::string Node::getID() const
+{
+	std::ostringstream convert;
+	convert << m_id;
+	return convert.str();
+}
 nodeType Node::getType()
 {
 	return m_type;

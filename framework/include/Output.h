@@ -1,11 +1,18 @@
-#ifndef _INPUT_H
-#define _INPUT_H_
+#ifndef _OUTPUT_H_
+#define _OUTPUT_H_
+
+#include "Enum.h"
+#include "Slot.h"
+class Node;
 
 class Output : public BaseSlot
 {
 	public:
-		Output(const char *_name, const SVariable &_var): BaseSlot(_name, _var)
-	{ m_type = Stype::output; }
+		Output(Node *_parent, const char *_name, const SVariable &_var);
+		Node *getParent();
+		Output *clone();
+	private:
+		Node *m_parent;
 
 };
 

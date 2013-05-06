@@ -27,8 +27,5 @@ class DataBase : public Container<Node>
 		 *
 		 * \param _name  name of the node to get
 		 */
-		//Node *getNode(const std::string &_name);
-
-
 };
 #endif

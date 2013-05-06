@@ -1,7 +1,6 @@
 PROJECT=Framework.so
 CXX=g++
-OPTS=-c -g -Wall -std=c++0x -D_GLIBCXX_DEBUG
-
+OPTS=-c -g -Wall -std=c++0x -D_GLIBCXX_DEBUG 
 
 # folder structure
 SRCDIR = src
