@@ -5,16 +5,16 @@
  *  \brief Derived class from Slot expressing a Input slot
  */
 
-#ifndef _INPUT_H
+#ifndef _INPUT_H_
 #define _INPUT_H_
 #include <memory>
 
 #include "Slot.h"
+
 class Output;
 
-class Input : public BaseSlot
+class Input : public Slot
 {
-
 	private:
 		//! \brief boolean to determine whether connected or not
 		bool m_override;
@@ -26,7 +26,7 @@ class Input : public BaseSlot
 		 *  \param _name name of the slot
 		 *  \param _var variable type
 		 */
-		Input(const char *_name, const SVariable &_var); 
+		Input(Node *_parent, const char *_name, const SVariable &_var); 
 
 		//! \brief Default Constructor
 		~Input();
@@ -35,23 +35,6 @@ class Input : public BaseSlot
 		 *  Set the m_ref pointer inside Input to point to a Output
 		 *  \param _s Output to be linked in
 		 */
-		void linkToOutput(Output &_s);
-		/*! \brief check whether node is overwritten
-		 *
-		 *  return true if Input is connected
-		 */
-		bool isOverwritten();
-		/*! \brief get possible connection to Output slot
-		 *
-		 *  Return a pointer to a Output slot the Input is connected to
-		 */
-		Output *getLink();
-		/*! \brief Prototype pattern
-		 *
-		 *  return copy of self
-		 */
-		Input *clone();
-
 };
 
 #endif

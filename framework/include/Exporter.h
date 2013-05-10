@@ -18,7 +18,7 @@ class XMLExporter
 		void open(const std::string &_name);
 		void close();
 		XMLExporter();
-		void writeNode(Node *_n);
+		void writeNode(const Node *_n);
 };
 
 #endif

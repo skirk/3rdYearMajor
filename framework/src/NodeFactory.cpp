@@ -13,11 +13,12 @@ const char* NodeFactory::SHEET="sheet";
 const char* NodeFactory::NAME="name";
 const char* NodeFactory::NODE="node";
 
+NodeFactory* NodeFactory::m_instance = NULL;
+
 
 NodeFactory::NodeFactory()
 {
 	m_db = new DataBase();
-	InitDB();
 }
 
 NodeFactory::~NodeFactory()
@@ -32,26 +33,26 @@ DataBase *NodeFactory::getDB()
 
 Node *NodeFactory::createNode(const std::string &_name,  const nodeType &_type)
 {
-	Node* n = m_db->get(_name);
+	Node *n = m_db->get(_name);
 	//if Node exits return it
 	if(n->getName() != "empty")
 	{
+		std::cout<<"adding empty"<<'\n';
 		return n;
 	}
-
+	n->setName(_name);
 	switch(_type)
 	{
 		case nodeType::GRAPH:
 			std::cout<<"constructing new node"<<'\n';
-			n = new Graph(m_db);
+			n = new Graph();
 			break;
 		case nodeType::STATE:
 			std::cout<<"STATE"<<'\n';
 			break;
 		case nodeType::EXPRESSION:
 			std::cout<<"EXPRESSION\n";
-			break;
-	}
+			break; }
 	return n;
 }
 
@@ -115,5 +116,12 @@ void NodeFactory::addNodeToDB(xmlDocPtr _doc, xmlNodePtr _cur) const
 
 	xmlFree(name);
 	xmlFree(key);
+}
 
+NodeFactory &NodeFactory::getInstance()
+{
+	if(m_instance == NULL) {
+		m_instance = new NodeFactory();
+	}
+	return *m_instance;
 }

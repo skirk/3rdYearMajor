@@ -1,8 +1,7 @@
 #include "Exporter.h"
 #include "Node.h"
 #include "Graph.h"
-#include "Input.h"
-#include "Output.h"
+#include "Slot.h"
 #define MY_ENCODING "ISO-8859-1"
 
 /*
@@ -48,7 +47,7 @@ void XMLExporter::writeSourceElement(const std::string &_sourcenode, const std::
 	xmlTextWriterEndElement(m_writer);
 }
 
-void XMLExporter::writeNode(Node *_n)
+void XMLExporter::writeNode(const Node *_n)
 {
 	int rc;
 	rc = xmlTextWriterStartElement(m_writer, BAD_CAST "node");
@@ -60,16 +59,10 @@ void XMLExporter::writeNode(Node *_n)
 		if((*i)->isInput())
 		{
 			writeSlotAttributes((*i)->getName(), "input", "var");
-			Input* in = dynamic_cast<Input*>(*i);
-			if(in==NULL)
+			if ((*i)->isOverwritten())
 			{
-				std::cout<<"writing input slot failed\n";
-				return;
-			}
-			if (in->isOverwritten())
-			{
-				Output *out = in->getLink();
-				
+				Slot *out = (*i)->getLink();
+
 				writeSourceElement(out->getParent()->getName(), out->getParent()->getID() , out->getName());
 			}
 		}
@@ -81,7 +74,7 @@ void XMLExporter::writeNode(Node *_n)
 	}
 	if(_n->getType() == nodeType::GRAPH)
 	{
-		Graph *g = dynamic_cast<Graph*>(_n);
+		const Graph *g = dynamic_cast<const Graph*>(_n);
 		if (g != NULL)
 		{
 			Graph::nodeiterator it = g->NodeBegin() ; 
@@ -91,4 +84,3 @@ void XMLExporter::writeNode(Node *_n)
 	}
 	rc = xmlTextWriterEndElement(m_writer);
 }
-

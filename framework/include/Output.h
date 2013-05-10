@@ -5,15 +5,11 @@
 #include "Slot.h"
 class Node;
 
-class Output : public BaseSlot
+class Output : public Slot
 {
 	public:
 		Output(Node *_parent, const char *_name, const SVariable &_var);
-		Node *getParent();
 		Output *clone();
-	private:
-		Node *m_parent;
-
 };
 
 #endif

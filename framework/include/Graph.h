@@ -15,64 +15,55 @@
 
 class DataBase;
 class Connection;
-class BaseSlot;
+class Slot;
 
 class Graph : public Node
 {
 	private:
-		/*! \brief DataBase
-		 *
-		 * DataBase that the graph gets its nodes from
-		 */
-		DataBase *m_db;
+		
 		typedef std::vector<Node*> NodeVec;
 		/*! \brief Vector of Nodes
 		 *
 		 * Nodes inside the graph
 		 */
 		NodeVec m_nodes;
-		/*! \brief Vector of Connections
-		 *
-		 *  Successful connections inside the Graph
-		 */
-	private:
-		Node *getNode(const std::string &_name, int id);
-		BaseSlot *getSlotFromString(const std::string &_name);
+
+
 	public:
 		/* \brief A constructor
 		 *
 		 *  Inject dependency to a DataBase object
 		 */
-		Graph(DataBase *_db):
-			m_db(_db)
-	{
-		m_type = nodeType::GRAPH;
-	}
+		Graph()
+		{
+			m_type = nodeType::GRAPH;
+		}
 		Graph(const Graph&) = delete;
-		/* \brief Connect two slots together
-		 *
-		 * \param _lhs left hand side Slot
-		 * \param _rhs right hand side Slot
-		 */
-		void connectNodes(const std::string &_lhs, const std::string &_rhs);
 		/* \brief Add node to the Graph from the Database
 		 *
 		 * \param _name name of the node to add
 		 */
-		void addNode(const std::string &_name);
+		void addNode(Node *_n);
 
 		/* \brief Returns and iterator to the first element of m_nodes vector.
 		 *
 		 * This method is used by PythonWrapper to iterate through the vector
 		 */
-		NodeVec::iterator NodeBegin();
+		NodeVec::const_iterator NodeBegin() const; 
 		/* \brief Returns and iterator to the last element of m_nodes vector.
 		 *
 		 * This method is used by PythonWrapper to iterate through the vector
 		 */
-		NodeVec::iterator NodeEnd();
-		typedef NodeVec::iterator nodeiterator;
-
+		NodeVec::const_iterator NodeEnd() const;
+		/* \brief Returns and iterator to the last element of m_nodes vector.
+		 *
+		 * This method is used by PythonWrapper to iterate through the vector
+		 */
+		typedef NodeVec::const_iterator nodeiterator;
+		/* \brief Add a input slot to the graph
+		 *
+		 */
+		Node *getNode(const std::string &_name, int id);
 };
 
 #endif

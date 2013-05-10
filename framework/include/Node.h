@@ -12,7 +12,7 @@
 #include "Container.h"
 #include "Slot.h"
 
-class Node : public Container<BaseSlot>
+class Node : public Container<Slot>
 {
 	protected:
 		//! id of the node
@@ -21,25 +21,31 @@ class Node : public Container<BaseSlot>
 		std::string m_name;
 		//! type
 		nodeType m_type;
+		//! The Parent node
+		Node *m_parent;
 
+		Node(const Node&);
 	public:
 		Node();
 		virtual	~Node();
-		Node(const Node&);
-		//virtual Node *clone() const;
 
+		/*! \brief set m_name
+		 *
+		 * \param _name new name to be set to m_name
+		 */
 		void setName(const std::string &_name); 
+		//! \brief Get the name of the Node
 		std::string getName() const;
-
+		/*! \brief set m_id
+		 *
+		 * \param _id new id to be set to m_id
+		 */
 		void setID(int _id);
+		//! \brief Get the id of the Node
 		std::string getID() const;
+		//! \brief Get the type of the Node
+		nodeType getType() const;
 
-		nodeType getType();
-
-		virtual void write(const std::string &_file);
-
-		//void addSlot(Slot*);
-		//Slot* getSlot(const std::string &_name);
 };
 
 #endif

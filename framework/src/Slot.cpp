@@ -1,50 +1,78 @@
 #include "Slot.h"
 #include "Enum.h"
 
-BaseSlot::BaseSlot()
-	:m_name("empty")
+Slot::Slot() : 
+	m_name("empty")
 {
 }
 
-BaseSlot::~BaseSlot()
+Slot::~Slot()
 {
 }
 
-BaseSlot::BaseSlot(const BaseSlot &_other)
+Slot::Slot(const Slot &_other)
 {
 	m_name = _other.m_name;
 	m_var = _other.m_var;
 	m_type = _other.m_type;
 }
 
-BaseSlot::BaseSlot(const char *_name, const SVariable &_var)
-	:m_name(_name), m_var(_var)
+Slot::Slot(Node *_parent, const char *_name, const SVariable &_var)
+	:m_name(_name), m_var(_var), m_parent(_parent)
 {
 }
 
-BaseSlot& BaseSlot::operator=(const BaseSlot& _other)
+Slot& Slot::operator=(const Slot& _other)
 {
 	m_name = _other.m_name;
 	m_var = _other.m_var;
 	return *this;
 }
 
-std::string BaseSlot::getName() const
+std::string Slot::getName() const
 {
 	return m_name;
 }
 
-Stype BaseSlot::getType() const
+Stype Slot::getType() const
 {
 	return m_type;
 }
 
-bool BaseSlot::isInput() const
+bool Slot::isInput() const
 {
-	return m_type == Stype::input; 
+	return  m_type == Stype::input;
 }
 
-BaseSlot *BaseSlot::clone()
+Slot *Slot::clone()
 {
-	return new BaseSlot(*this);
+	return new Slot(*this);
 }
+
+Node *Slot::getParent()
+{
+	return m_parent;
+}
+
+void Slot::linkToSlot(Slot &_s)
+{
+	m_link = &_s;
+	m_override=true;
+}
+
+void Slot::removeLink()
+{
+	m_link = NULL;
+	m_override=false;
+}
+
+Slot* Slot::getLink()
+{
+	return m_link;
+}
+
+bool Slot::isOverwritten()
+{
+	return m_override;
+}
+

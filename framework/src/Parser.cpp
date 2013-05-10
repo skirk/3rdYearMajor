@@ -49,10 +49,10 @@ _cur = _cur->next;
 }
 */
 
-BaseSlot* Parser::parseSlot(Node *_in,const xmlDocPtr &_doc, xmlNodePtr _cur)
+Slot* Parser::parseSlot(Node *_in,const xmlDocPtr &_doc, xmlNodePtr _cur)
 {
 //	std::cout<<"adding to the node "<< _cur->name <<'\n';
-	BaseSlot *s = 0;
+	Slot *s = 0;
 	xmlChar *name,*type, *var; 
 	name = parseElement(_doc, _cur, "name");
 	type = parseElement(_doc, _cur,  "type");
@@ -60,6 +60,7 @@ BaseSlot* Parser::parseSlot(Node *_in,const xmlDocPtr &_doc, xmlNodePtr _cur)
 	EnumParser<SVariable> p;
 	if(!strcmp((const char*)type, "input"))
 		s = new Input(
+				_in,
 				(const char*)name,
 				p.parseEnum((const char*)var)
 				);
@@ -71,7 +72,7 @@ BaseSlot* Parser::parseSlot(Node *_in,const xmlDocPtr &_doc, xmlNodePtr _cur)
 				);
 	/*
 	//bitwise or to determine whether a input or output variable
-	s = new BaseSlot(
+	s = new Slot(
 			(const char*)name,
 			p.parseEnum((const char*)type) |
 			p.parseEnum((const char*)var)
