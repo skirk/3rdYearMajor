@@ -24,9 +24,11 @@ Node *Graph::getNode(const std::string &_name, int _id)
 		Node *n = *it;
 		if(n->getName() == _name)
 		{
+			std::cout<<"name matches\n";
 			int i = std::stoi(n->getID());
 			if(i == _id)
 			{
+				std::cout<<"id matches\n";
 				return n;
 			}
 		}

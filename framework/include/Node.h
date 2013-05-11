@@ -24,10 +24,10 @@ class Node : public Container<Slot>
 		//! The Parent node
 		Node *m_parent;
 
-		Node(const Node&);
 	public:
 		Node();
 		virtual	~Node();
+		Node(const Node&);
 
 		/*! \brief set m_name
 		 *

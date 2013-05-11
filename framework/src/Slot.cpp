@@ -2,7 +2,13 @@
 #include "Enum.h"
 
 Slot::Slot() : 
-	m_name("empty")
+	m_name("empty"),
+	m_override(false)
+{
+}
+Slot::Slot(Node *_parent, const char *_name, const SVariable &_var)
+	:m_name(_name), m_var(_var), m_parent(_parent),
+	m_override(false)
 {
 }
 
@@ -15,12 +21,12 @@ Slot::Slot(const Slot &_other)
 	m_name = _other.m_name;
 	m_var = _other.m_var;
 	m_type = _other.m_type;
+	m_parent = _other.m_parent;
+	m_link = _other.m_link;
+	m_override = _other.m_override;
 }
 
-Slot::Slot(Node *_parent, const char *_name, const SVariable &_var)
-	:m_name(_name), m_var(_var), m_parent(_parent)
-{
-}
+
 
 Slot& Slot::operator=(const Slot& _other)
 {

@@ -144,7 +144,7 @@ void Context::addOutputSlot(const std::string &_name,const SVariable &_var)
 void Context::addNode(const std::string &_name)
 {
 	NodeFactory &fact = NodeFactory::getInstance();
-	m_current->addNode(fact.createNode(_name, nodeType::GRAPH));
+	m_current->addNode(new Node(*fact.createNode(_name, nodeType::GRAPH)));
 }
 
 void Context::writeNode(const std::string &_file)
@@ -152,4 +152,5 @@ void Context::writeNode(const std::string &_file)
 	XMLExporter exp;
 	exp.open(_file);
 	exp.writeNode(m_current);
+	exp.close();
 }

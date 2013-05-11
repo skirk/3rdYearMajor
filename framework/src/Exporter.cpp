@@ -55,10 +55,13 @@ void XMLExporter::writeNode(const Node *_n)
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "id", BAD_CAST _n->getID().c_str());
 	for(Node::iterator i = _n->begin(); i<_n->end(); i++)
 	{
+		std::cout<<"in writing node"<<'\n';
+		std::cout<<(*i)->getName()<<'\n';
 		rc = xmlTextWriterStartElement(m_writer, BAD_CAST "slot");
 		if((*i)->isInput())
 		{
 			writeSlotAttributes((*i)->getName(), "input", "var");
+			std::cout<<(*i)->isOverwritten()<<'\n';
 			if ((*i)->isOverwritten())
 			{
 				Slot *out = (*i)->getLink();
@@ -71,6 +74,7 @@ void XMLExporter::writeNode(const Node *_n)
 			writeSlotAttributes((*i)->getName(), "output", "var");
 		}
 		rc = xmlTextWriterEndElement(m_writer);
+
 	}
 	if(_n->getType() == nodeType::GRAPH)
 	{
