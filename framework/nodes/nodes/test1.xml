@@ -1,0 +1,21 @@
+<node name="plus" sheet="multiply.xsl" type="operator">
+	<slots>
+		<slot>
+			<name>in1</name>
+			<type>input</type>
+			<var>int</var>
+		</slot>
+		<slot>
+			<name>in2</name>
+			<type>input</type>
+			<var>int</var>
+		</slot>
+		<slot>
+			<name>ad</name>
+			<type>output</type>
+			<var>vec3</var>
+		</slot>
+	</slots>
+</node>
+
+

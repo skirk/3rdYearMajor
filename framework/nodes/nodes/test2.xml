@@ -1,0 +1,21 @@
+<node name="asdasd" sheet="multiply.xsl" type="operator">
+	<slots>
+		<slot>
+			<name>in1</name>
+			<type>input</type>
+			<var>vec3</var>
+		</slot>
+		<slot>
+			<name>in2</name>
+			<type>input</type>
+			<var>vec3</var>
+		</slot>
+		<slot>
+			<name>out1</name>
+			<type>output</type>
+			<var>vec3</var>
+		</slot>
+	</slots>
+</node>
+
+

@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:attribute name="name" type="xs:string"/>
+	<xs:element name="slot" type="slotType"/>
+	<!-- allowed node types -->
+	<xs:simpleType name="nodeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="graph"/>
+			<xs:enumeration value="operator"/>
+			<xs:enumeration value="function"/>
+			<xs:enumeration value="state"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- allowed variable types -->
+	<xs:simpleType name="slotVar">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="boolean"/>
+			<xs:enumeration value="int"/>
+			<xs:enumeration value="float"/>
+			<xs:enumeration value="vec3"/>
+			<xs:enumeration value="vec4"/>
+			<xs:enumeration value="mat3"/>
+			<xs:enumeration value="mat4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- extended variable types -->
+	<xs:simpleType name="InputOrOutput">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="input"/>
+			<xs:enumeration value="output"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- type of the sheet -->
+	<xs:simpleType name="sheetType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value=".*\.xsl"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- slot type -->
+	<xs:complexType name="slotType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="type" type="InputOrOutput"/>
+			<xs:element name="var" type="slotVar"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SlotContainer">
+		<xs:sequence>
+			<xs:element ref="slot" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="node">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="slots" type="SlotContainer" minOccurs="0"/>	
+			</xs:sequence>
+			<xs:attribute ref="name" use="required"/>
+			<xs:attribute name="sheet" type="sheetType" use="required"/>
+			<xs:attribute name="type" type="nodeType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
