@@ -14,6 +14,7 @@ Context::Context()
 {
 	m_current = new Graph();
 	m_current->setName("root");
+	m_current->setParent(NULL);
 
 	NodeFactory &fact = NodeFactory::getInstance();
 	fact.InitDB();
@@ -178,19 +179,33 @@ void Context::addNode(const std::string &_name)
 	Node *n =fact.createNode(_name, nodeType::GRAPH)->clone();
 	n->setParent(m_current);
 	m_current->addNode(n);
-	if(n->getType() == nodeType::GRAPH)
+	if(n->getType() == nodeType::STATE)
 	{
-		inputs.push_back(n);
+		m_uniforminputs.push_back(n);
 	}
 }
 
-void Context::writeNode(const std::string &_file)
+void Context::writeCurrentNode(const std::string &_file)
 {
 	XMLExporter exp;
-	exp.open(_file);
+	exp.open(_file, "nodes");
 	exp.write(m_current);
 	exp.close();
 }
+
+void Context::writeShader(const std::string &_file)
+{
+	while(m_current->getParent() != NULL)
+	{
+		goUpALevel();
+	}
+	XMLExporter exp;
+	exp.open(_file, "shader");
+	exp.writeHeader(m_uniforminputs, "import");
+	exp.write(m_current);
+	exp.close();
+}
+
 
 void Context::goUpALevel()
 { 
@@ -212,11 +227,6 @@ void Context::goDownALevel(const std::string &_name)
 		return;
 	}
 	m_current=g;
-}
-
-Graph *Context::getCurrent() const
-{
-	return m_current;
 }
 
 void Context::printDB() const

@@ -18,7 +18,8 @@ class Slot;
 class Node;
 class Graph;
 
-typedef std::vector<Node*> HeaderStruct;
+typedef std::vector<Node*> UniformStruct;
+typedef std::vector<Slot*> HeaderStruct;
 
 class Context 
 {
@@ -26,8 +27,9 @@ class Context
 		Graph *m_current;
 
 		//! \brief the values coming into the from openGL or previous shader stage
-		HeaderStruct m_globalinputs;
+		UniformStruct m_uniforminputs;
 		//! \brief the values going outside of the shader
+		HeaderStruct m_globalinputs;
 		HeaderStruct m_globaloutputs;
 	public:
 		/* \brief  Constructor
@@ -79,7 +81,12 @@ class Context
 		 *
 		 * \param _location path of the output
 		 */
-		void writeNode(const std::string _location&);
+		void writeCurrentNode(const std::string &_location);
+		/* \brief Write current Node to XML
+		 *
+		 * \param _location path of the output
+		 */
+		void writeShader(const std::string &_location);
 		/* \brief Print all the DataBase nodes
 		 */
 		void printDB() const;

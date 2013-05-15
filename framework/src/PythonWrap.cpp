@@ -74,14 +74,6 @@ DataBase *pointer (DataBase& p)
 	return &p;
 }
 
-void printNode(const Context &_c) 
-{
-	Graph *g = _c.getCurrent();
-	Graph::nodeiterator it=g->NodeBegin();
-	for(; it != g->NodeEnd(); it++) {
-		std::cout<<*(*it)<<'\n';
-	}
-}
 BOOST_PYTHON_MODULE(Framework)
 {
 	using namespace boost::python;
@@ -113,8 +105,8 @@ BOOST_PYTHON_MODULE(Framework)
 		.def("goUpALevel", &Context::goUpALevel)
 		.def("goDownALevel", &Context::goDownALevel)
 		.def("addNode", &Context::addNode)
-		.def("write", &Context::writeNode)
-		.def("printNode", &printNode)
+		.def("writeNode", &Context::writeCurrentNode)
+		.def("writeShader", &Context::writeShader)
 		.def("printDB", &Context::printDB)
 		;
 

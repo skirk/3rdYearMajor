@@ -10,11 +10,12 @@
 #define _EXPORTER_H_
 
 #include <string>
+#include <vector>
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 
 class Node;
-class HeaderStruct;
+typedef std::vector<Node*> UniformStruct;
 
 class XMLExporter
 {
@@ -63,8 +64,9 @@ class XMLExporter
 		/* \brief open a file and set up the writer
 		 *
 		 * \param _name path to the output
+		 * \param _element the opening element
 		 */
-		void open(const std::string &_name);
+		void open(const std::string &_name, const std::string &_element);
 		/* \brief close up the writer
 		 */
 		void close();
@@ -76,8 +78,9 @@ class XMLExporter
 		/* \brief Write Header into XML
 		 *
 		 * \param _h Header to write
+		 * \param _type the tag to write
 		 */
-		void writeHeader(const HeaderStruct &_h);
+		void writeHeader(const UniformStruct &_h, const std::string &_type);
 };
 
 #endif

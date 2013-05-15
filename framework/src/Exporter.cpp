@@ -2,6 +2,7 @@
 #include "Node.h"
 #include "Graph.h"
 #include "Slot.h"
+#include "Context.h"
 #define MY_ENCODING "ISO-8859-1"
 
 /*
@@ -14,18 +15,21 @@ XMLExporter::XMLExporter()
 {
 }
 
-void XMLExporter::open(const std::string &_filename)
+void XMLExporter::open(const std::string &_filename, const std::string &_element)
 {
 	m_doc = xmlNewDoc(BAD_CAST XML_DEFAULT_VERSION);
 	m_node = xmlNewDocNode(m_doc, NULL, BAD_CAST "root", NULL);
 	xmlDocSetRootElement(m_doc, m_node);
 	m_writer = xmlNewTextWriterTree(m_doc,m_node, 0); 
 	xmlTextWriterStartDocument(m_writer, NULL, MY_ENCODING, NULL);
-	m_file = _filename;
+	xmlTextWriterStartElement(m_writer, BAD_CAST _element.c_str());
 
+	m_file = _filename;
 }
+
 void XMLExporter::close()
 {
+	xmlTextWriterEndElement(m_writer);
 	xmlFreeTextWriter(m_writer);
 	xmlSaveFormatFileEnc(m_file.c_str(), m_doc, MY_ENCODING, 1); 
 	xmlCleanupParser();
@@ -50,18 +54,7 @@ void XMLExporter::writeSourceElement(const std::string &_sourcenode, const std::
 void XMLExporter::write(const Node *_n) 
 {
 	
-	int rc;
-	for(unsigned int i = 0; i<_c.getGlobalInputs()->size(); i++) 
-	{
-		rc = xmlTextWriterStartElement(m_writer, BAD_CAST "import");
-		xmlTextWriterWriteAttribute(
-				m_writer,
-				BAD_CAST "name", 
-				BAD_CAST inputs[i]->getName().c_str()
-				);
-	}
-
-	rc = xmlTextWriterStartElement(m_writer, BAD_CAST "node");
+	xmlTextWriterStartElement(m_writer, BAD_CAST "node");
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "name", BAD_CAST _n->getName().c_str());
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "id", BAD_CAST _n->getID().c_str());
 
@@ -88,7 +81,7 @@ void XMLExporter::write(const Node *_n)
 			}
 
 	}
-	rc = xmlTextWriterEndElement(m_writer);
+	xmlTextWriterEndElement(m_writer);
 }
 
 
@@ -133,18 +126,16 @@ void XMLExporter::writeSlots(const Node *_n)
 
 void XMLExporter::writeState(const Node *_n)
 {
-	int rc;
-	rc = xmlTextWriterStartElement(m_writer, BAD_CAST "import");
-	rc = xmlTextWriterWriteAttribute(
-			m_writer, 
-			BAD_CAST "name",
-			BAD_CAST _n->getName().c_str()
-			);
-
 }
 
-void XMLExporter::writeHeader(const HeaderStruct &_st)
+void XMLExporter::writeHeader(const UniformStruct &_st, const std::string &_type)
 {
-		
+	
+	for(unsigned int i = 0; i <_st.size(); i++)
+	{
+		xmlTextWriterStartElement(m_writer, BAD_CAST _type.c_str());
+		xmlTextWriterWriteAttribute(m_writer, BAD_CAST "name", BAD_CAST _st[i]->getName().c_str());
+		xmlTextWriterEndElement(m_writer);
+	}
 
 }
