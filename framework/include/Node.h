@@ -1,7 +1,12 @@
-//! A Node Class
-/*!
-	Node represents an expression or a state
-*/
+/*! \author Tuomo Rinne
+ *  \version 0.1
+ *  \date 21/03/2013 
+ *  \class Node
+ *  \brief Node represents a small piece of program to be transformed into XML later
+ *  Nodes are the building blocks of the program and they contain slots which can be 
+ *  connected to other Nodes, therefore building complicated structures.
+ */
+
 
 #ifndef _NODE_H_
 #define _NODE_H_

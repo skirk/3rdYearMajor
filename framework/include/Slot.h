@@ -31,9 +31,13 @@ class Slot {
 		//! \brief Type of the slot (input or output)
 		Stype m_type;
 
+		//! \brief Parent node
 		Node *m_parent;
+		//! \brief A possible link to other slot
 		Slot *m_link;
+		//! \brief whether the object is overwritten or not
 		bool m_override;
+		//! \brief private copy constructor
 		Slot(const Slot&);
 
 	public:
@@ -59,7 +63,12 @@ class Slot {
 		virtual bool isInput() const;
 		//! \brief Prototype pattern
 		virtual Slot *clone();
+		//! \brief return the parent Node pointe
 		Node *getParent();
+		/*! \brief Link to other slot
+		 *
+		 *	\param _s set the m_link to point to _s
+		 */
 		void linkToSlot(Slot *_s);
 		/*! \brief Remove the connection
 		 *
@@ -76,11 +85,6 @@ class Slot {
 		 *  Return a pointer to a Output slot the Input is connected to
 		 */
 		Slot *getLink();
-		/*! \brief Prototype pattern
-		 *
-		 *  return copy of self
-		 */
-
 };
 
 #endif
