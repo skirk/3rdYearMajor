@@ -2,6 +2,7 @@
 #include "Slot.h"
 #include "Graph.h"
 #include "NodeFactory.h"
+#include "DataBase.h"
 #include "Exporter.h"
 
 #include <iostream>
@@ -33,39 +34,37 @@ void Context::connectSlots(const std::string &_lhs, const std::string &_rhs)
 		std::cout<<"source slot doesn't exist"<<'\n';
 		return;
 	}
-	if( lhs->isInput() ^ rhs->isInput())
+	//could do with better solution
+	bool b_lhs, b_rhs;
+	b_lhs = lhs->isInput();
+	b_rhs = rhs->isInput();
+	std::cout<<b_lhs<<b_rhs<<'\n';
+	//check whether the context is the current node, if so reverse the slot 
+	if( lhs->getParent() == m_current )
 	{
-		//could do with better solution
-		if(lhs->isInput())
-		{
-			/*
-			if (castAndConnect(lhs, rhs))
-			{
-				std::cout<<"connection succesfull\n";
-				return;
-			}
-			else
-			{
-				std::cout<<"connection failed\n";
-				return;
-			}
-			*/
+		std::cout<<"lhs parent node match\n";
+		b_lhs = !b_lhs;
+	}
+	if( rhs->getParent() == m_current )
+	{
+		std::cout<<"rhs parent node match\n";
+		b_rhs = !b_rhs;
+	}
 
-		}
-		else if (rhs->isInput())
+	std::cout<<b_lhs<<b_rhs<<'\n';
+	if( b_lhs ^ b_rhs )
+	{
+		if(b_lhs)
 		{
-			/*
-			if(castAndConnect(rhs, lhs))
-			{
-				std::cout<<"connection successful\n";
-				return;
-			}
-			else
-			{
-				std::cout<<"connection failed\n";
-				return;
-			}
-			*/
+			lhs->linkToSlot(rhs);
+			std::cout<<"connection formed\n";
+			return;
+		}
+		else if (b_rhs)
+		{
+			rhs->linkToSlot(lhs);
+			std::cout<<"connection formed\n";
+			return;
 		}
 	}
 	else
@@ -100,7 +99,6 @@ Slot *Context::getSlotFromString(const std::string &_name)
 	{
 		//when the context is inside the node the desired node is the opposite slot
 		std::string slotname = *beg1;
-		slotname = slotname + "Pair";	
 		return m_current->get(slotname);
 	}
 	else if(i == 3)
@@ -123,6 +121,39 @@ Slot *Context::getSlotFromString(const std::string &_name)
 		return new Slot;
 	}
 }
+
+Node *Context::getNodeFromString(const std::string &_name)
+{
+	boost::tokenizer<> tok(_name);
+	boost::tokenizer<>::iterator beg = tok.begin();
+	boost::tokenizer<>::iterator beg1 = beg;
+
+	int i = 0;
+	//this solution could be done a bit better
+	for(; beg != tok.end(); beg++)
+	{
+		i++;
+	}
+	if(i==2)
+	{
+		std::string node = *beg1;
+		std::string id   = *++beg1;
+		int i = std::stoi(id);
+		Node *n = m_current->getNode(node, i);
+
+		Graph *g = dynamic_cast<Graph*>(n);
+		if(g == NULL)
+		{
+			std::cout<<"failed to transfer\n";
+		}
+		return n;
+	}
+	else
+	{
+		std::cout<<"Node path is wrong\n";
+		return new Node;
+	}
+}
 /*
 
    Slot *Context::searchOutputToInput(const std::string &_name)
@@ -134,23 +165,67 @@ Slot *Context::getSlotFromString(const std::string &_name)
 
 void Context::addInputSlot(const std::string &_name, const SVariable &_var)
 {
-	//m_current.addNode();
+	m_current->add(new Slot(m_current, _name.c_str(), Stype::input, _var));
 }
-void Context::addOutputSlot(const std::string &_name,const SVariable &_var)
+void Context::addOutputSlot(const std::string &_name,  const SVariable &_var)
 {
-	//m_current.addNode(new Pair(this,_name.c_str(), Stype::output, _var));	
+	m_current->add(new Slot(m_current ,_name.c_str(), Stype::output,_var));	
 }
 
 void Context::addNode(const std::string &_name)
 {
 	NodeFactory &fact = NodeFactory::getInstance();
-	m_current->addNode(new Node(*fact.createNode(_name, nodeType::GRAPH)));
+	Node *n =fact.createNode(_name, nodeType::GRAPH)->clone();
+	n->setParent(m_current);
+	m_current->addNode(n);
+	if(n->getType() == nodeType::GRAPH)
+	{
+		inputs.push_back(n);
+	}
 }
 
 void Context::writeNode(const std::string &_file)
 {
 	XMLExporter exp;
 	exp.open(_file);
-	exp.writeNode(m_current);
+	exp.write(m_current);
 	exp.close();
+}
+
+void Context::goUpALevel()
+{ 
+	Graph *g = dynamic_cast<Graph*>(m_current->getParent());
+	if(g == NULL)
+	{
+		std::cout<<"failed to go up\n";
+		return;
+	}
+	m_current=g;
+}
+
+void Context::goDownALevel(const std::string &_name)
+{
+	Graph *g = dynamic_cast<Graph*>(getNodeFromString(_name));
+	if(g == NULL)
+	{
+		std::cout<<"failed to go down\n";
+		return;
+	}
+	m_current=g;
+}
+
+Graph *Context::getCurrent() const
+{
+	return m_current;
+}
+
+void Context::printDB() const
+{
+	NodeFactory &fact = NodeFactory::getInstance();
+	DataBase *db = fact.getDB();
+	Container<Node>::iterator it = db->begin();
+	for(; it != db->end(); it++){
+		std::cout<<(*it)->getName()<<'\n';
+	}
+
 }

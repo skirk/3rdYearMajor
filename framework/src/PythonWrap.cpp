@@ -4,6 +4,7 @@
 #include "Context.h"
 #include "Exporter.h"
 #include "NodeFactory.h"
+#include "XSLTprocessor.h"
 #include <memory>
 #include <boost/python.hpp>
 
@@ -24,7 +25,6 @@ std::ostream &operator<<(std::ostream &os, const Slot &_s)
 		os << _s.getName()<<" "<<static_cast<int>(_s.getType()) << " OUTPUT";
 	return os;
 }
-
 
 struct convert_node_ptr
 {
@@ -47,7 +47,8 @@ BOOST_PYTHON_MODULE(nodetype)
 
 	enum_<nodeType>("NodeType")
 		.value("GRAPH", nodeType::GRAPH)
-		.value("EXPRESSION", nodeType::EXPRESSION)
+		.value("OPERATOR", nodeType::OPERATOR)
+		.value("FUNCTION", nodeType::FUNCTION)
 		.value("STATE", nodeType::STATE)
 		.export_values()
 		;
@@ -73,14 +74,14 @@ DataBase *pointer (DataBase& p)
 	return &p;
 }
 
-void writeNode(const Node &_n, const std::string _location = "output.xml")
+void printNode(const Context &_c) 
 {
-	XMLExporter e;
-	e.open(_location);
-	e.writeNode(&_n);
-	e.close();
+	Graph *g = _c.getCurrent();
+	Graph::nodeiterator it=g->NodeBegin();
+	for(; it != g->NodeEnd(); it++) {
+		std::cout<<*(*it)<<'\n';
+	}
 }
-
 BOOST_PYTHON_MODULE(Framework)
 {
 	using namespace boost::python;
@@ -109,12 +110,19 @@ BOOST_PYTHON_MODULE(Framework)
 		.def("disconnectSlots", &Context::disconnectSlots)
 		.def("addInputSlot", &Context::addInputSlot)
 		.def("addOutputSlot", &Context::addOutputSlot)
+		.def("goUpALevel", &Context::goUpALevel)
+		.def("goDownALevel", &Context::goDownALevel)
 		.def("addNode", &Context::addNode)
 		.def("write", &Context::writeNode)
+		.def("printNode", &printNode)
+		.def("printDB", &Context::printDB)
 		;
 
 
-	//to_python_converter<Node *, convert_node_ptr>();
+	class_<XSLTprocessor>("processor")
+		.def("process", &XSLTprocessor::applyStylesheetToXML)
+		;
+	to_python_converter<Node *, convert_node_ptr>();
 	to_python_converter<Slot *, convert_slot_ptr>();
 
 	initnodetype();

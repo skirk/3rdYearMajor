@@ -48,3 +48,8 @@ void Graph::addNode(Node *_n)
 	_n->setID(id);
 	m_nodes.push_back(_n);
 }	
+
+Graph *Graph::clone()
+{
+	return  new Graph(*this);
+}

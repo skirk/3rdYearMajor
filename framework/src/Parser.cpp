@@ -1,8 +1,6 @@
 #include "Parser.h"
 #include "Node.h"
 #include "Slot.h"
-#include "Input.h"
-#include "Output.h"
 #include "EnumParser.h"
 #include "Enum.h"
 #include <cstring>
@@ -16,7 +14,10 @@ const char* Parser::NODESLOT = "slot";
 Node* Parser::parseNode(const xmlDocPtr &_doc, xmlNodePtr _cur)
 { 
 	Node *temp = new Node();
+	EnumParser<nodeType> ep;
 	std::string name = (const char*)parseAttribute(_cur, "name");
+	std::string type = (const char*)parseAttribute(_cur, "type");
+	temp->setType(ep.parseEnum(type.c_str()));
 	temp->setName(name);
 	_cur = _cur->xmlChildrenNode;
 	while(_cur != NULL) {
@@ -59,15 +60,17 @@ Slot* Parser::parseSlot(Node *_in,const xmlDocPtr &_doc, xmlNodePtr _cur)
 	var = parseElement(_doc, _cur,  "var");
 	EnumParser<SVariable> p;
 	if(!strcmp((const char*)type, "input"))
-		s = new Input(
+		s = new Slot(
 				_in,
 				(const char*)name,
+				Stype::input,
 				p.parseEnum((const char*)var)
 				);
 	else 
-		s = new Output(
+		s = new Slot(
 				_in,
 				(const char*)name,
+				Stype::output,
 				p.parseEnum((const char*)var)
 				);
 	/*
@@ -101,7 +104,6 @@ xmlChar* Parser::parseElement(const xmlDocPtr &_doc, xmlNodePtr _cur, const char
 	while (_cur != NULL) {
 		if ((!xmlStrcmp(_cur->name, (const xmlChar *)_key))) {
 			key = xmlNodeListGetString(_doc, _cur->xmlChildrenNode, 1);
-			//printf("k'eyword: %s\n", key);
 		}
 		_cur = _cur->next;
 	}

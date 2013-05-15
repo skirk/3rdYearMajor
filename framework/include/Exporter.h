@@ -5,6 +5,8 @@
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 class Node;
+class HeaderStruct;
+
 class XMLExporter
 {
 	private:
@@ -14,11 +16,14 @@ class XMLExporter
 		std::string m_file;
 		void writeSlotAttributes(const std::string&, const std::string&, const std::string&);
 		void writeSourceElement(const std::string&, const std::string&, const std::string&);
+		void writeState(const Node *_n);
+		void writeSlots(const Node *_n);
 	public:
 		void open(const std::string &_name);
 		void close();
+		void write(const Node *_n);
+		void writeHeader(const HeaderStruct&);
 		XMLExporter();
-		void writeNode(const Node *_n);
 };
 
 #endif

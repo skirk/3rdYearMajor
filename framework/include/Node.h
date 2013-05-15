@@ -45,6 +45,15 @@ class Node : public Container<Slot>
 		std::string getID() const;
 		//! \brief Get the type of the Node
 		nodeType getType() const;
+		//! \!brief set m_type
+		void setType(const nodeType&);
+		//! \brief Get the parent of the Node
+		Node *getParent() const;
+		//! \!brief set m_parent
+		void setParent(Node *);
+		//! \brief Prototype pattern
+		virtual Node *clone();
+
 
 };
 

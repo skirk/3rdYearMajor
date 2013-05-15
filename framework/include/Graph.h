@@ -38,7 +38,6 @@ class Graph : public Node
 		{
 			m_type = nodeType::GRAPH;
 		}
-		Graph(const Graph&) = delete;
 		/* \brief Add node to the Graph from the Database
 		 *
 		 * \param _name name of the node to add
@@ -64,6 +63,8 @@ class Graph : public Node
 		 *
 		 */
 		Node *getNode(const std::string &_name, int id);
+		//! \brief Prototype Pattern
+		virtual Graph *clone();
 };
 
 #endif

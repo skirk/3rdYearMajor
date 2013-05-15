@@ -6,8 +6,8 @@ Slot::Slot() :
 	m_override(false)
 {
 }
-Slot::Slot(Node *_parent, const char *_name, const SVariable &_var)
-	:m_name(_name), m_var(_var), m_parent(_parent),
+Slot::Slot(Node *_parent, const char *_name, const Stype &_type,  const SVariable &_var)
+	:m_name(_name), m_var(_var), m_type(_type), m_parent(_parent),
 	m_override(false)
 {
 }
@@ -17,8 +17,7 @@ Slot::~Slot()
 }
 
 Slot::Slot(const Slot &_other)
-{
-	m_name = _other.m_name;
+{ m_name = _other.m_name;
 	m_var = _other.m_var;
 	m_type = _other.m_type;
 	m_parent = _other.m_parent;
@@ -60,9 +59,9 @@ Node *Slot::getParent()
 	return m_parent;
 }
 
-void Slot::linkToSlot(Slot &_s)
+void Slot::linkToSlot(Slot *_s)
 {
-	m_link = &_s;
+	m_link = _s;
 	m_override=true;
 }
 

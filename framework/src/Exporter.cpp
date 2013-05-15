@@ -47,12 +47,56 @@ void XMLExporter::writeSourceElement(const std::string &_sourcenode, const std::
 	xmlTextWriterEndElement(m_writer);
 }
 
-void XMLExporter::writeNode(const Node *_n)
+void XMLExporter::write(const Node *_n) 
 {
+	
 	int rc;
+	for(unsigned int i = 0; i<_c.getGlobalInputs()->size(); i++) 
+	{
+		rc = xmlTextWriterStartElement(m_writer, BAD_CAST "import");
+		xmlTextWriterWriteAttribute(
+				m_writer,
+				BAD_CAST "name", 
+				BAD_CAST inputs[i]->getName().c_str()
+				);
+	}
+
 	rc = xmlTextWriterStartElement(m_writer, BAD_CAST "node");
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "name", BAD_CAST _n->getName().c_str());
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "id", BAD_CAST _n->getID().c_str());
+
+	switch (_n->getType())
+	{
+		case nodeType::STATE:
+			break;
+
+		case nodeType::OPERATOR:
+			writeSlots(_n);
+			break;
+		case nodeType::FUNCTION:
+			writeSlots(_n);
+			break;
+
+		case nodeType::GRAPH:
+			writeSlots(_n);
+			const Graph *g = dynamic_cast<const Graph*>(_n);
+			if (g != NULL)
+			{
+				Graph::nodeiterator it = g->NodeBegin() ; 
+				for(; it != g->NodeEnd(); ++it)
+					write(*it);
+			}
+
+	}
+	rc = xmlTextWriterEndElement(m_writer);
+}
+
+
+
+
+void XMLExporter::writeSlots(const Node *_n)
+{
+	int rc;
 	for(Node::iterator i = _n->begin(); i<_n->end(); i++)
 	{
 		std::cout<<"in writing node"<<'\n';
@@ -65,26 +109,42 @@ void XMLExporter::writeNode(const Node *_n)
 			if ((*i)->isOverwritten())
 			{
 				Slot *out = (*i)->getLink();
-
-				writeSourceElement(out->getParent()->getName(), out->getParent()->getID() , out->getName());
+				writeSourceElement(
+						out->getParent()->getName(),
+						out->getParent()->getID(),
+						out->getName());
 			}
 		}
 		else
 		{
 			writeSlotAttributes((*i)->getName(), "output", "var");
+			if ((*i)->isOverwritten())
+			{
+				Slot *out = (*i)->getLink();
+				writeSourceElement(
+						out->getParent()->getName(),
+						out->getParent()->getID(), 
+						out->getName());
+			}
 		}
 		rc = xmlTextWriterEndElement(m_writer);
+	}
+}
 
-	}
-	if(_n->getType() == nodeType::GRAPH)
-	{
-		const Graph *g = dynamic_cast<const Graph*>(_n);
-		if (g != NULL)
-		{
-			Graph::nodeiterator it = g->NodeBegin() ; 
-			for(; it != g->NodeEnd(); ++it)
-				writeNode(*it);
-		}
-	}
-	rc = xmlTextWriterEndElement(m_writer);
+void XMLExporter::writeState(const Node *_n)
+{
+	int rc;
+	rc = xmlTextWriterStartElement(m_writer, BAD_CAST "import");
+	rc = xmlTextWriterWriteAttribute(
+			m_writer, 
+			BAD_CAST "name",
+			BAD_CAST _n->getName().c_str()
+			);
+
+}
+
+void XMLExporter::writeHeader(const HeaderStruct &_st)
+{
+		
+
 }

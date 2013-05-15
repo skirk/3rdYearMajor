@@ -42,7 +42,7 @@ class Slot {
 		 * \param _name Name of the slot
 		 * \param _var Type of the variable
 		 */
-		Slot(Node *_parent, const char *_name, const SVariable &_var);
+		Slot(Node *_parent, const char *_name,const Stype &_type, const SVariable &_var);
 		//! \brief default constructor
 		Slot();
 		virtual ~Slot();
@@ -60,7 +60,7 @@ class Slot {
 		//! \brief Prototype pattern
 		virtual Slot *clone();
 		Node *getParent();
-		void linkToSlot(Slot &_s);
+		void linkToSlot(Slot *_s);
 		/*! \brief Remove the connection
 		 *
 		 *	set the m_link to null and m_override to false	

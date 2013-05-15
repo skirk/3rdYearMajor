@@ -13,7 +13,8 @@ enum class SVariable {
 
 enum class nodeType {
 	GRAPH,
-	EXPRESSION,
+	OPERATOR,
+	FUNCTION,
 	STATE
 };
 

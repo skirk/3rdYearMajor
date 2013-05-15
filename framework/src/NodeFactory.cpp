@@ -37,27 +37,26 @@ Node *NodeFactory::createNode(const std::string &_name,  const nodeType &_type)
 	//if Node exits return it
 	if(n->getName() != "empty")
 	{
-		std::cout<<"adding "<<n->getName()<<'\n';
-		
-		for(Node::iterator it = n->begin(); it != n->end(); it++)
-			std::cout<<(*it)->getName()<<'\n';
-		
+		std::cout<<"returning "<<n->getName()<<'\n';
 		return n;
 	}
-	n->setName(_name);
 	switch(_type)
 	{
 		case nodeType::GRAPH:
-		std::cout<<"adding empty"<<'\n';
-			std::cout<<"constructing new node"<<'\n';
+			std::cout<<"constructing new graph"<<'\n';
 			n = new Graph();
+			n->setName(_name);
 			break;
 		case nodeType::STATE:
 			std::cout<<"STATE"<<'\n';
 			break;
-		case nodeType::EXPRESSION:
+		case nodeType::FUNCTION:
 			std::cout<<"EXPRESSION\n";
-			break; }
+			break; 
+		case nodeType::OPERATOR:
+			std::cout<<"EXPRESSION\n";
+			break; 
+	}
 	return n;
 }
 
