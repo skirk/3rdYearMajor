@@ -71,15 +71,24 @@ void XMLExporter::write(const Node *_n)
 			break;
 
 		case nodeType::GRAPH:
-			writeSlots(_n);
-			const Graph *g = dynamic_cast<const Graph*>(_n);
-			if (g != NULL)
 			{
-				Graph::nodeiterator it = g->NodeBegin() ; 
-				for(; it != g->NodeEnd(); ++it)
-					write(*it);
-			}
+				writeSlots(_n);
+				const Graph *g = dynamic_cast<const Graph*>(_n);
+				if (g != NULL)
+				{
+					Graph::nodeiterator it = g->NodeBegin() ; 
+					for(; it != g->NodeEnd(); ++it)
+						write(*it);
+				}
+				break;
 
+			}
+		case nodeType::CONSTRUCTOR:
+			writeSlots(_n);
+			break;
+		case nodeType::CONSTANT:
+			writeSlots(_n);
+			break;
 	}
 	xmlTextWriterEndElement(m_writer);
 }
@@ -97,7 +106,7 @@ void XMLExporter::writeSlots(const Node *_n)
 		rc = xmlTextWriterStartElement(m_writer, BAD_CAST "slot");
 		if((*i)->isInput())
 		{
-			writeSlotAttributes((*i)->getName(), "input", "var");
+			writeSlotAttributes((*i)->getName(), "input", (*i)->getVar());
 			std::cout<<(*i)->isOverwritten()<<'\n';
 			if ((*i)->isOverwritten())
 			{
@@ -110,7 +119,7 @@ void XMLExporter::writeSlots(const Node *_n)
 		}
 		else
 		{
-			writeSlotAttributes((*i)->getName(), "output", "var");
+			writeSlotAttributes((*i)->getName(), "output", (*i)->getVar());
 			if ((*i)->isOverwritten())
 			{
 				Slot *out = (*i)->getLink();
@@ -128,14 +137,26 @@ void XMLExporter::writeState(const Node *_n)
 {
 }
 
-void XMLExporter::writeHeader(const UniformStruct &_st, const std::string &_type)
+void XMLExporter::writeHeader(const HeaderStruct &_header, const std::string &_type)
 {
 	
-	for(unsigned int i = 0; i <_st.size(); i++)
+	for(unsigned int i = 0; i <_header.size(); i++)
 	{
 		xmlTextWriterStartElement(m_writer, BAD_CAST _type.c_str());
-		xmlTextWriterWriteAttribute(m_writer, BAD_CAST "name", BAD_CAST _st[i]->getName().c_str());
+		xmlTextWriterWriteAttribute(m_writer, BAD_CAST "name", BAD_CAST _header[i]->getName().c_str());
+		xmlTextWriterWriteAttribute(m_writer, BAD_CAST "type", BAD_CAST _header[i]->getVar().c_str());
+		xmlTextWriterWriteAttribute(
+				m_writer,
+				BAD_CAST "parent", 
+				BAD_CAST _header[i]->getParent()->getName().c_str()
+				);
+		xmlTextWriterWriteAttribute(
+				m_writer, 
+				BAD_CAST "id",
+				BAD_CAST _header[i]->getParent()->getID().c_str());
 		xmlTextWriterEndElement(m_writer);
 	}
 
 }
+
+

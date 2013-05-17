@@ -15,7 +15,9 @@
 #include <libxml/xmlwriter.h>
 
 class Node;
-typedef std::vector<Node*> UniformStruct;
+class Slot;
+
+typedef std::vector<Slot*> HeaderStruct;
 
 class XMLExporter
 {
@@ -80,7 +82,8 @@ class XMLExporter
 		 * \param _h Header to write
 		 * \param _type the tag to write
 		 */
-		void writeHeader(const UniformStruct &_h, const std::string &_type);
+		void writeHeader(const HeaderStruct &_header, const std::string &_type);
 };
+
 
 #endif

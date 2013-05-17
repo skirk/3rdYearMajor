@@ -1,4 +1,4 @@
-/*! \author Eclipse 
+/*! \author Eclipse  & Tuomo Rinne
  *  \version 0.1
  *  \date 11/04/2013 
  *  \class EnumParser
@@ -35,6 +35,21 @@ class EnumParser
 			if (iValue  == enumMap.end())
 				std::cout<<"Couldn't parse enumerator\n";
 			return iValue->second;
+		}
+
+		std::string lookupEnum(T _enum)
+		{
+			std::string key = "empty";
+			typename std::map<std::string, T>::const_iterator it;
+			for(it=enumMap.begin(); it != enumMap.end(); it++)
+			{
+				if (it->second == _enum)
+				{
+					key = it->first;
+					
+				}
+			}
+			return key;
 		}
 };
 

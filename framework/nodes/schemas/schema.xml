@@ -9,6 +9,8 @@
 			<xs:enumeration value="operator"/>
 			<xs:enumeration value="function"/>
 			<xs:enumeration value="state"/>
+			<xs:enumeration value="constructor"/>
+			<xs:enumeration value="constant"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<!-- allowed variable types -->

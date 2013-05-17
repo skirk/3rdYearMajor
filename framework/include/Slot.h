@@ -59,6 +59,8 @@ class Slot {
 		std::string getName() const;
 		//! \brief get Type of the Slot
 		Stype getType() const;
+		//! \brief get Variable
+		std::string getVar() const;
 		//! \brief Check whether the slot is input
 		virtual bool isInput() const;
 		//! \brief Prototype pattern

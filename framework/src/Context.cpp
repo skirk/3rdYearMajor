@@ -84,9 +84,11 @@ void Context::disconnectSlots(const std::string &_inputSlot)
 
 Slot *Context::getSlotFromString(const std::string &_name)
 {
-	boost::tokenizer<> tok(_name);
-	boost::tokenizer<>::iterator beg = tok.begin();
-	boost::tokenizer<>::iterator beg1 = beg;
+	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+	boost::char_separator<char> sep(".");
+	tokenizer tok(_name, sep);
+	tokenizer::iterator beg = tok.begin();
+	tokenizer::iterator beg1 = beg;
 
 	int i = 0;
 	//this solution could be done a bit better
@@ -125,9 +127,11 @@ Slot *Context::getSlotFromString(const std::string &_name)
 
 Node *Context::getNodeFromString(const std::string &_name)
 {
-	boost::tokenizer<> tok(_name);
-	boost::tokenizer<>::iterator beg = tok.begin();
-	boost::tokenizer<>::iterator beg1 = beg;
+	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+	boost::char_separator<char> sep(".");
+	tokenizer tok(_name, sep);
+	tokenizer::iterator beg = tok.begin();
+	tokenizer::iterator beg1 = beg;
 
 	int i = 0;
 	//this solution could be done a bit better
@@ -155,22 +159,24 @@ Node *Context::getNodeFromString(const std::string &_name)
 		return new Node;
 	}
 }
-/*
-
-   Slot *Context::searchOutputToInput(const std::string &_name)
-   {
-   std::vector<Connection*>::iterator it;
-   for(it = m_connections.begin() 
-
-*/
 
 void Context::addInputSlot(const std::string &_name, const SVariable &_var)
 {
-	m_current->add(new Slot(m_current, _name.c_str(), Stype::input, _var));
+	Slot* s = new Slot(m_current, _name.c_str(), Stype::input, _var);
+	if(m_current->getParent() == NULL)
+	{
+		m_globalinputs.push_back(s);
+	}
+	m_current->add(s);
 }
 void Context::addOutputSlot(const std::string &_name,  const SVariable &_var)
 {
-	m_current->add(new Slot(m_current ,_name.c_str(), Stype::output,_var));	
+	Slot* s = new Slot(m_current, _name.c_str(), Stype::output, _var);
+	if(m_current->getParent() == NULL)
+	{
+		m_globaloutputs.push_back(s);
+	}
+	m_current->add(s);
 }
 
 void Context::addNode(const std::string &_name)
@@ -181,7 +187,11 @@ void Context::addNode(const std::string &_name)
 	m_current->addNode(n);
 	if(n->getType() == nodeType::STATE)
 	{
-		m_uniforminputs.push_back(n);
+		m_uniforminputs.push_back(*n->begin());
+	}
+	if(n->getType() == nodeType::CONSTANT)
+	{
+		m_constants.insert(std::pair<Node*, std::string>(n, ""));
 	}
 }
 
@@ -201,7 +211,9 @@ void Context::writeShader(const std::string &_file)
 	}
 	XMLExporter exp;
 	exp.open(_file, "shader");
-	exp.writeHeader(m_uniforminputs, "import");
+	exp.writeHeader(m_globalinputs, "import");
+	exp.writeHeader(m_globaloutputs, "export");
+	exp.writeHeader(m_uniforminputs, "uniforms");
 	exp.write(m_current);
 	exp.close();
 }
@@ -238,4 +250,12 @@ void Context::printDB() const
 		std::cout<<(*it)->getName()<<'\n';
 	}
 
+}
+
+void Context::changeConstValue(const std::string &_node, const std::string &_value)
+{
+	Node *n = getNodeFromString(_node);
+	ConstantMap::iterator it;
+	it = m_constants.find(n);
+	it.second = _value;
 }

@@ -108,6 +108,7 @@ BOOST_PYTHON_MODULE(Framework)
 		.def("writeNode", &Context::writeCurrentNode)
 		.def("writeShader", &Context::writeShader)
 		.def("printDB", &Context::printDB)
+		.def("changeConstValue", &Context::changeConstValue)
 		;
 
 

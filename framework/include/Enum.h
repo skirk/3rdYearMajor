@@ -15,7 +15,9 @@ enum class nodeType {
 	GRAPH,
 	OPERATOR,
 	FUNCTION,
-	STATE
+	STATE,
+	CONSTRUCTOR,
+	CONSTANT
 };
 
 

@@ -12,25 +12,30 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "Enum.h"
 
 class Slot;
 class Node;
 class Graph;
 
-typedef std::vector<Node*> UniformStruct;
-typedef std::vector<Slot*> HeaderStruct;
 
 class Context 
 {
 	private:
 		Graph *m_current;
 
+		typedef std::vector<Slot*> HeaderStruct;
 		//! \brief the values coming into the from openGL or previous shader stage
-		UniformStruct m_uniforminputs;
-		//! \brief the values going outside of the shader
 		HeaderStruct m_globalinputs;
+		//! \brief the values going outside of the shader
 		HeaderStruct m_globaloutputs;
+		//! \brief the uniforms of the shader
+		HeaderStruct m_uniforminputs;
+
+		typedef std::map<Node*, std::string> ConstantMap;
+		//! \brief ConstantMap holds all the values for constants
+		ConstantMap m_constants;
 	public:
 		/* \brief  Constructor
 		 *
@@ -90,6 +95,12 @@ class Context
 		/* \brief Print all the DataBase nodes
 		 */
 		void printDB() const;
+		/* \brief Change a constant value
+		 * 
+		 * \param _node constant node to be changed
+		 * \param _value the new value of the constant
+		 */
+		void changeConstValue(const std::string &_node, const std::string &_value);
 	private:
 
 		/* \brief get Slot according to string

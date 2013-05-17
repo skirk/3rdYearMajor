@@ -56,6 +56,12 @@ Node *NodeFactory::createNode(const std::string &_name,  const nodeType &_type)
 		case nodeType::OPERATOR:
 			std::cout<<"EXPRESSION\n";
 			break; 
+		case nodeType::CONSTRUCTOR:
+			std::cout<<"CONSTRUCTOR\n";
+			break; 
+		case nodeType::CONSTANT:
+			std::cout<<"CONSTANT\n";
+			break; 
 	}
 	return n;
 }

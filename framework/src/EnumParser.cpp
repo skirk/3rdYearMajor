@@ -20,4 +20,6 @@ EnumParser<nodeType>::EnumParser()
 	enumMap["operator"] = nodeType::OPERATOR;
 	enumMap["function"] = nodeType::FUNCTION;
 	enumMap["state"] =nodeType::STATE;
+	enumMap["constructor"] = nodeType::CONSTRUCTOR;
+	enumMap["constant"] = nodeType::CONSTANT;
 }

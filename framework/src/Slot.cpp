@@ -1,5 +1,6 @@
 #include "Slot.h"
 #include "Enum.h"
+#include "EnumParser.h"
 
 Slot::Slot() : 
 	m_name("empty"),
@@ -79,5 +80,11 @@ Slot* Slot::getLink()
 bool Slot::isOverwritten()
 {
 	return m_override;
+}
+
+std::string Slot::getVar() const
+{
+	EnumParser<SVariable> p;	
+	return p.lookupEnum(m_var);
 }
 
