@@ -20,7 +20,9 @@ Node::Node(const Node &_n)
 
 	for(iterator it =_n.begin(); it != _n.end(); it++)
 	{
-		m_elems.push_back((*it)->clone()); 
+		Slot *s = (*it)->clone();
+		s->setParent(this);
+		m_elems.push_back(s); 
 	}
 }
 

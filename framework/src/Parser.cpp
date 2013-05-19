@@ -1,37 +1,58 @@
 #include "Parser.h"
 #include "Node.h"
+#include "Graph.h"
 #include "Slot.h"
 #include "EnumParser.h"
 #include "Enum.h"
 #include <cstring>
 #include <libxml/xmlschemas.h>
 #include <iostream>
-
 const char* Parser::NODESLOTS = "slots";
+const char* Parser::NODE = "node";
 const char* Parser::NODEOUTPUTS = "outputs";
 const char* Parser::NODESLOT = "slot";
+const char* Parser::SLOTSOURCE = "source";
 
 Node* Parser::parseNode(const xmlDocPtr &_doc, xmlNodePtr _cur)
 { 
-	Node *temp = new Node();
 	EnumParser<nodeType> ep;
 	std::string name = (const char*)parseAttribute(_cur, "name");
 	std::string type = (const char*)parseAttribute(_cur, "type");
-	temp->setType(ep.parseEnum(type.c_str()));
-	temp->setName(name);
+	nodeType t = ep.parseEnum(type.c_str());
+
+	Node *temp;
 	_cur = _cur->xmlChildrenNode;
-	while(_cur != NULL) {
-		if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOTS)) {
-			xmlNodePtr _cur2 = _cur->xmlChildrenNode;
-			while(_cur2 != NULL) {
-				if(!xmlStrcmp(_cur2->name, (const xmlChar *)NODESLOT)) {
-					temp->add(parseSlot(temp, _doc, _cur2));
-				}
-			_cur2 = _cur2->next;
+
+	if(t == nodeType::GRAPH)
+	{
+		std::cout<<"node type is graph"<<'\n';
+		Graph *temp2 = new Graph();
+		while(_cur != NULL) {
+			if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOT)) 
+			{
+				temp2->add(parseSlot(temp2, _doc, _cur));
 			}
+			if(!xmlStrcmp(_cur->name, (const xmlChar *)NODE))
+			{
+				temp2->addNode(parseNode(_doc, _cur));
+			}
+			_cur = _cur->next;
 		}
-		_cur = _cur->next;
+		temp = temp2;
 	}
+	else
+	{
+		temp = new Node();
+		while(_cur != NULL) {
+			if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOT)) {
+				temp->add(parseSlot(temp, _doc, _cur));
+			}
+			_cur = _cur->next;
+		}
+	}
+
+	temp->setType(t);
+	temp->setName(name);
 	return temp;
 }
 /*
@@ -52,35 +73,62 @@ _cur = _cur->next;
 
 Slot* Parser::parseSlot(Node *_in,const xmlDocPtr &_doc, xmlNodePtr _cur)
 {
-//	std::cout<<"adding to the node "<< _cur->name <<'\n';
+	//	std::cout<<"adding to the node "<< _cur->name <<'\n';
 	Slot *s = 0;
 	xmlChar *name,*type, *var; 
-	name = parseElement(_doc, _cur, "name");
-	type = parseElement(_doc, _cur,  "type");
-	var = parseElement(_doc, _cur,  "var");
+	name = parseAttribute(_cur, "name");
+	type = parseAttribute(_cur,  "type");
+	var = parseAttribute(_cur,  "var");
 	EnumParser<SVariable> p;
-	if(!strcmp((const char*)type, "input"))
+	if(!strcmp((const char*)type, "input")) 
+	{
 		s = new Slot(
 				_in,
 				(const char*)name,
 				Stype::input,
 				p.parseEnum((const char*)var)
 				);
+		xmlNodePtr cur2 = _cur->children;
+		while(cur2 != NULL) {
+
+			std::cout<<cur2->name<<'\n';
+			if(!xmlStrcmp(cur2->name, (const xmlChar *)SLOTSOURCE)) {
+
+				std::map<std::string, std::string> connections;
+
+				std::string input, output;
+				xmlChar *sourcenode, *sourceid, *sourceslot;
+				sourcenode = parseAttribute(cur2, "node");
+				sourceid = parseAttribute(cur2, "id");
+				sourceslot = parseAttribute(cur2,  "slot");
+
+				input = _in->getName() + (char *)name;
+				output = (char*)sourcenode;
+				//output += (char*)sourceid;
+				output += (char*)sourceslot;
+				std::cout<<input<<" "<<output<<'\n';
+
+			}
+			cur2 = cur2->next;
+		}
+	}
 	else 
+	{
 		s = new Slot(
 				_in,
 				(const char*)name,
 				Stype::output,
 				p.parseEnum((const char*)var)
 				);
+	}
 	/*
 	//bitwise or to determine whether a input or output variable
 	s = new Slot(
-			(const char*)name,
-			p.parseEnum((const char*)type) |
-			p.parseEnum((const char*)var)
-			);
-			*/
+	(const char*)name,
+	p.parseEnum((const char*)type) |
+	p.parseEnum((const char*)var)
+	);
+	*/
 
 	xmlFree(name);
 	xmlFree(type);
@@ -88,6 +136,8 @@ Slot* Parser::parseSlot(Node *_in,const xmlDocPtr &_doc, xmlNodePtr _cur)
 	_cur = _cur->next;
 	return s;
 }
+
+
 xmlChar* Parser::parseAttribute(xmlNodePtr _cur, const char* _key)
 {
 	xmlChar *key;

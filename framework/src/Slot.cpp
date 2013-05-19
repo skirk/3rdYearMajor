@@ -18,7 +18,8 @@ Slot::~Slot()
 }
 
 Slot::Slot(const Slot &_other)
-{ m_name = _other.m_name;
+{
+	m_name = _other.m_name;
 	m_var = _other.m_var;
 	m_type = _other.m_type;
 	m_parent = _other.m_parent;
@@ -27,11 +28,15 @@ Slot::Slot(const Slot &_other)
 }
 
 
-
 Slot& Slot::operator=(const Slot& _other)
 {
 	m_name = _other.m_name;
 	m_var = _other.m_var;
+	m_type = _other.m_type;
+	m_parent = _other.m_parent;
+	m_link = _other.m_link;
+	m_override = _other.m_override;
+
 	return *this;
 }
 
@@ -60,6 +65,10 @@ Node *Slot::getParent()
 	return m_parent;
 }
 
+void Slot::setParent(Node *_n)
+{
+	m_parent = _n;
+}
 void Slot::linkToSlot(Slot *_s)
 {
 	m_link = _s;

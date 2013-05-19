@@ -1,4 +1,5 @@
 #include "Exporter.h"
+#include "EnumParser.h"
 #include "Node.h"
 #include "Graph.h"
 #include "Slot.h"
@@ -11,8 +12,9 @@
  * #define BAD_CAST
  * Macro to cast a string to an xmlChar * when one know its safe.
  */
-XMLExporter::XMLExporter()
+XMLExporter::XMLExporter(ConstantMap *_map)
 {
+	m_map = _map;
 }
 
 void XMLExporter::open(const std::string &_filename, const std::string &_element)
@@ -22,14 +24,11 @@ void XMLExporter::open(const std::string &_filename, const std::string &_element
 	xmlDocSetRootElement(m_doc, m_node);
 	m_writer = xmlNewTextWriterTree(m_doc,m_node, 0); 
 	xmlTextWriterStartDocument(m_writer, NULL, MY_ENCODING, NULL);
-	xmlTextWriterStartElement(m_writer, BAD_CAST _element.c_str());
-
 	m_file = _filename;
 }
 
 void XMLExporter::close()
 {
-	xmlTextWriterEndElement(m_writer);
 	xmlFreeTextWriter(m_writer);
 	xmlSaveFormatFileEnc(m_file.c_str(), m_doc, MY_ENCODING, 1); 
 	xmlCleanupParser();
@@ -42,21 +41,27 @@ void XMLExporter::writeSlotAttributes(const std::string &_name, const std::strin
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "var", BAD_CAST _var.c_str());
 }
 
-void XMLExporter::writeSourceElement(const std::string &_sourcenode, const std::string &_id, const std::string &_sourceslot)
+void XMLExporter::writeSourceElement(const std::string &_sourcenode, const std::string &_id, const std::string &_sourceslot, const std::string &_value)
 {
 	xmlTextWriterStartElement(m_writer, BAD_CAST "source");
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "node", BAD_CAST _sourcenode.c_str());
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "id", BAD_CAST _id.c_str());
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "slot", BAD_CAST _sourceslot.c_str());
+	if (_value != "")
+	{
+		xmlTextWriterWriteAttribute(m_writer, BAD_CAST "value", BAD_CAST _value.c_str());
+	}
 	xmlTextWriterEndElement(m_writer);
 }
 
 void XMLExporter::write(const Node *_n) 
 {
-	
+
 	xmlTextWriterStartElement(m_writer, BAD_CAST "node");
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "name", BAD_CAST _n->getName().c_str());
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "id", BAD_CAST _n->getID().c_str());
+	EnumParser<nodeType> p;
+	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "type", BAD_CAST p.lookupEnum(_n->getType()).c_str());
 
 	switch (_n->getType())
 	{
@@ -81,14 +86,17 @@ void XMLExporter::write(const Node *_n)
 						write(*it);
 				}
 				break;
-
 			}
 		case nodeType::CONSTRUCTOR:
-			writeSlots(_n);
-			break;
+			{
+				writeSlots(_n);
+				break;
+			}
 		case nodeType::CONSTANT:
-			writeSlots(_n);
-			break;
+			{
+				writeSlots(_n);
+				break;
+			}
 	}
 	xmlTextWriterEndElement(m_writer);
 }
@@ -108,18 +116,47 @@ void XMLExporter::writeSlots(const Node *_n)
 		{
 			writeSlotAttributes((*i)->getName(), "input", (*i)->getVar());
 			std::cout<<(*i)->isOverwritten()<<'\n';
+
 			if ((*i)->isOverwritten())
 			{
 				Slot *out = (*i)->getLink();
-				writeSourceElement(
-						out->getParent()->getName(),
-						out->getParent()->getID(),
-						out->getName());
+				if(out->getParent()->getType() == nodeType::CONSTANT)
+				{
+					std::cout<<"writing constant node"<<'\n';
+					Slot *out = (*i)->getLink();
+
+					ConstantMap::const_iterator it;
+					for(it = m_map->begin(); it != m_map->end(); it++)
+					{
+						std::cout<<it->first->getName()<<'\n';
+						std::cout<<it->first<<'\n';
+						std::cout<<out->getParent()->getName()<<'\n';
+						std::cout<<out->getParent()<<'\n';
+					}
+					it = m_map->find(out->getParent());
+					if(it != m_map->end())
+					{
+						std::cout<<"inside source element\n";
+						writeSourceElement(
+								out->getParent()->getName(),
+								out->getParent()->getID(),
+								out->getName(),
+								it->second.c_str());
+					}
+				}
+				else 
+				{
+					writeSourceElement(
+							out->getParent()->getName(),
+							out->getParent()->getID(),
+							out->getName());
+				}
 			}
 		}
 		else
 		{
 			writeSlotAttributes((*i)->getName(), "output", (*i)->getVar());
+
 			if ((*i)->isOverwritten())
 			{
 				Slot *out = (*i)->getLink();
@@ -139,7 +176,7 @@ void XMLExporter::writeState(const Node *_n)
 
 void XMLExporter::writeHeader(const HeaderStruct &_header, const std::string &_type)
 {
-	
+
 	for(unsigned int i = 0; i <_header.size(); i++)
 	{
 		xmlTextWriterStartElement(m_writer, BAD_CAST _type.c_str());

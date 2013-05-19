@@ -15,11 +15,13 @@ Graph::NodeVec::const_iterator Graph::NodeEnd() const
 
 Node *Graph::getNode(const std::string &_name, int _id)
 {
-	NodeVec::iterator it;
 
 	int its = 0;
+	NodeVec::iterator it;
+	std::cout<<"accessing iterators\n";
 	for (it = m_nodes.begin(); it != m_nodes.end(); ++it)
 	{
+		std::cout<<"in get Node\n";
 		Node *n = *it;
 		if(n->getName() == _name)
 		{
@@ -45,6 +47,7 @@ void Graph::addNode(Node *_n)
 		id++;
 	}
 	_n->setID(id);
+	_n->setParent(this);
 	m_nodes.push_back(_n);
 }	
 

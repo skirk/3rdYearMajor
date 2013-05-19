@@ -191,13 +191,20 @@ void Context::addNode(const std::string &_name)
 	}
 	if(n->getType() == nodeType::CONSTANT)
 	{
+		std::cout<<"inserting stuff\n";
+		std::cout<<n<<'\n';
+		for(Node::iterator it = n->begin(); it != n->end(); it++)
+		{
+			std::cout<<(*it)->getParent()<<'\n';
+
+		}
 		m_constants.insert(std::pair<Node*, std::string>(n, ""));
 	}
 }
 
 void Context::writeCurrentNode(const std::string &_file)
 {
-	XMLExporter exp;
+	XMLExporter exp(&m_constants);
 	exp.open(_file, "nodes");
 	exp.write(m_current);
 	exp.close();
@@ -209,7 +216,7 @@ void Context::writeShader(const std::string &_file)
 	{
 		goUpALevel();
 	}
-	XMLExporter exp;
+	XMLExporter exp(&m_constants);
 	exp.open(_file, "shader");
 	exp.writeHeader(m_globalinputs, "import");
 	exp.writeHeader(m_globaloutputs, "export");
@@ -257,5 +264,5 @@ void Context::changeConstValue(const std::string &_node, const std::string &_val
 	Node *n = getNodeFromString(_node);
 	ConstantMap::iterator it;
 	it = m_constants.find(n);
-	it.second = _value;
+	(*it).second = _value;
 }

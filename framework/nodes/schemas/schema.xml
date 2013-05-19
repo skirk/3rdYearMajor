@@ -38,26 +38,39 @@
 			<xs:pattern value=".*\.xsl"/>
 		</xs:restriction>
 	</xs:simpleType>
+
+	<xs:simpleType name="idType">
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
 	<!-- slot type -->
 	<xs:complexType name="slotType">
-		<xs:sequence>
-			<xs:element name="name" type="xs:string"/>
-			<xs:element name="type" type="InputOrOutput"/>
-			<xs:element name="var" type="slotVar"/>
-		</xs:sequence>
+		<xs:attribute name="name" type="xs:string"/>
+		<xs:attribute name="type" type="InputOrOutput"/>
+		<xs:attribute name="var" type="slotVar"/>
 	</xs:complexType>
 	<xs:complexType name="SlotContainer">
 		<xs:sequence>
 			<xs:element ref="slot" minOccurs="1" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:element name="root">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="node"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="node">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="slots" type="SlotContainer" minOccurs="0"/>	
+				<xs:element ref="slot" minOccurs="0" maxOccurs="unbounded"/>	
+				<xs:element ref="node" minOccurs="0" maxOccurs="unbounded"/>	
 			</xs:sequence>
 			<xs:attribute ref="name" use="required"/>
-			<xs:attribute name="sheet" type="sheetType" use="required"/>
+			<xs:attribute name="sheet" type="sheetType"/>
+			<xs:attribute name="id" type="idType"/>
 			<xs:attribute name="type" type="nodeType" use="required"/>
 		</xs:complexType>
 	</xs:element>

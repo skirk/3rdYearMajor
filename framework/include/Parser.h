@@ -20,9 +20,11 @@ class Parser
 	public: 
 		//! Few variables to store document constants
 		//@{
+		static const char* NODE;
 		static const char* NODESLOT;
 		static const char* NODESLOTS;
 		static const char* NODEOUTPUTS;
+		static const char* SLOTSOURCE;
 		//@}
 	public:
 		/*! \brief ParseNode from given document and xmlNode.

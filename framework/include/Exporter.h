@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 
@@ -18,6 +19,7 @@ class Node;
 class Slot;
 
 typedef std::vector<Slot*> HeaderStruct;
+typedef std::map<const Node*, std::string> ConstantMap;
 
 class XMLExporter
 {
@@ -30,6 +32,11 @@ class XMLExporter
 		xmlTextWriterPtr m_writer;
 		//! /brief location where to write
 		std::string m_file;
+		/*! /brief map to hold values for constants
+		 * 
+		 * /note a duct tape solution
+		 */
+		ConstantMap *m_map;
 
 	private:
 		
@@ -46,7 +53,7 @@ class XMLExporter
 		 * \param _id id of the source
 		 * \param _sourceslot slot of the source
 		 */
-		void writeSourceElement(const std::string &_sourcenode, const std::string &_id, const std::string &_sourceslot);
+		void writeSourceElement(const std::string &_sourcenode, const std::string &_id, const std::string &_sourceslot, const std::string &_value="");
 		/* \brief Write State into XML
 		 *
 		 * \param _node node to write
@@ -62,7 +69,7 @@ class XMLExporter
 	public:
 		/* \brief Constructor
 		 */
-		XMLExporter();
+		XMLExporter(ConstantMap *_map);
 		/* \brief open a file and set up the writer
 		 *
 		 * \param _name path to the output

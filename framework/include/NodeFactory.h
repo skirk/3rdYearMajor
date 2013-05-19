@@ -23,6 +23,7 @@ class NodeFactory
 		static const char* SHEET;
 		static const char* NAME;
 		static const char* NODE;
+		static const char* ROOT;
 
 	public:
 		

@@ -67,6 +67,8 @@ class Slot {
 		virtual Slot *clone();
 		//! \brief return the parent Node pointe
 		Node *getParent();
+		//! \brief return the parent Node pointe
+		void setParent(Node *_n);
 		/*! \brief Link to other slot
 		 *
 		 *	\param _s set the m_link to point to _s

@@ -33,7 +33,7 @@ class Context
 		//! \brief the uniforms of the shader
 		HeaderStruct m_uniforminputs;
 
-		typedef std::map<Node*, std::string> ConstantMap;
+		typedef std::map<const Node*, std::string> ConstantMap;
 		//! \brief ConstantMap holds all the values for constants
 		ConstantMap m_constants;
 	public:
