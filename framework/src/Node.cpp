@@ -6,6 +6,7 @@
 Node::Node() :
 	m_name("empty")
 {
+	m_parent= NULL;
 	m_id = 0;
 }
 Node::~Node()

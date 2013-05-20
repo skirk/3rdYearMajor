@@ -28,6 +28,8 @@ class Graph : public Node
 		 */
 		NodeVec m_nodes;
 
+		void makeConnections();
+
 
 	public:
 		/* \brief A constructor

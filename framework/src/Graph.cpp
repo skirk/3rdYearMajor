@@ -18,7 +18,6 @@ Node *Graph::getNode(const std::string &_name, int _id)
 
 	int its = 0;
 	NodeVec::iterator it;
-	std::cout<<"accessing iterators\n";
 	for (it = m_nodes.begin(); it != m_nodes.end(); ++it)
 	{
 		std::cout<<"in get Node\n";
@@ -42,6 +41,8 @@ Node *Graph::getNode(const std::string &_name, int _id)
 void Graph::addNode(Node *_n)
 {
 	int id = 0;
+	
+	std::cout<<"adding Node "<<_n->getName()<<" into "<<m_name<<'\n';
 	while( getNode(_n->getName(), id)->getName() != "empty")
 	{
 		id++;

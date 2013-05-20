@@ -73,6 +73,7 @@ void Slot::linkToSlot(Slot *_s)
 {
 	m_link = _s;
 	m_override=true;
+	std::cout<<"connection formed"<<'\n';
 }
 
 void Slot::removeLink()

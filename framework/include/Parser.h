@@ -9,9 +9,10 @@
 #define _PARSER_H_
 
 #include <libxml/tree.h>
+#include <map>
+#include <string>
 
-
-
+class Graph;
 class Node;
 class Slot;
 
@@ -26,19 +27,22 @@ class Parser
 		static const char* NODEOUTPUTS;
 		static const char* SLOTSOURCE;
 		//@}
+	private:
+		void makeConnection(Graph *_g, std::string input, std::string output);
+		Node *getNodeFromString(Graph *_g, const std::string &_name);
 	public:
 		/*! \brief ParseNode from given document and xmlNode.
 		 *
 		 * \param _doc document to parse
 		 * \param _node node structure to iterate through
 		 */
-		Node* parseNode(const xmlDocPtr &_doc, xmlNodePtr _node);
+		Node* parseNode(const xmlDocPtr &_doc, xmlNodePtr _node, std::map<std::string, std::string> *_map=0);
 		/*! \brief ParseSLot from given document and xmlNode.
 		 *
 		 * \param _doc document to parse
 		 * \param _node node structure to iterate through
 		 */
-		Slot* parseSlot(Node*, const xmlDocPtr &_doc, xmlNodePtr _node);
+		Slot* parseSlot(Node *_in, const xmlDocPtr &_doc, xmlNodePtr _node, std::map<std::string, std::string> *_map = 0);
 		/*! \brief Parse a attribute out of node if any
 		 * 
 		 * \param _cur node to parse
@@ -61,6 +65,7 @@ class Parser
 		 * 
 		 * \param _node node structure to iterate through
 		 */
+
 };
 
 

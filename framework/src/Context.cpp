@@ -1,4 +1,5 @@
 #include "Context.h"
+#include "Util.h"
 #include "Slot.h"
 #include "Graph.h"
 #include "NodeFactory.h"
@@ -8,7 +9,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <boost/tokenizer.hpp>
-#include <boost/foreach.hpp>
 
 Context::Context()
 {
@@ -23,13 +23,13 @@ Context::Context()
 void Context::connectSlots(const std::string &_lhs, const std::string &_rhs)
 {
 
-	Slot *lhs = getSlotFromString(_lhs);
+	Slot *lhs = Utilities::findSlot(m_current, _lhs);
 	if(lhs->getName()=="empty")
 	{
 		std::cout<<"target slot doesn't exist"<<'\n';
 		return;
 	}
-	Slot *rhs = getSlotFromString(_rhs);
+	Slot *rhs = Utilities::findSlot(m_current, _rhs);
 	if(rhs->getName()=="empty")
 	{
 		std::cout<<"source slot doesn't exist"<<'\n';
@@ -78,86 +78,8 @@ void Context::connectSlots(const std::string &_lhs, const std::string &_rhs)
 
 void Context::disconnectSlots(const std::string &_inputSlot)
 {
-	Slot *input = getSlotFromString(_inputSlot);
+	Slot *input = Utilities::findSlot(m_current, _inputSlot);
 	input->removeLink();
-}
-
-Slot *Context::getSlotFromString(const std::string &_name)
-{
-	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-	boost::char_separator<char> sep(".");
-	tokenizer tok(_name, sep);
-	tokenizer::iterator beg = tok.begin();
-	tokenizer::iterator beg1 = beg;
-
-	int i = 0;
-	//this solution could be done a bit better
-	for(; beg != tok.end(); beg++)
-	{
-		i++;
-	}
-	//the slot has to be either graphs or some of its slots
-	//the graph requires one token , where the node slot path requires 3
-	if(i == 1)
-	{
-		//when the context is inside the node the desired node is the opposite slot
-		std::string slotname = *beg1;
-		return m_current->get(slotname);
-	}
-	else if(i == 3)
-	{
-		std::string node = *beg1;
-		std::string id   = *++beg1;
-		std::string slot = *++beg1;
-		int i = std::stoi(id);
-		Node *n = m_current->getNode(node, i);
-		if(n->getName()=="empty")
-		{
-			std::cout<<"Couldn't find "<<node<<"\n";
-			return new Slot;
-		}
-		return n->get(slot);
-	}
-	else
-	{
-		std::cout<<"Slot path is wrong\n";
-		return new Slot;
-	}
-}
-
-Node *Context::getNodeFromString(const std::string &_name)
-{
-	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-	boost::char_separator<char> sep(".");
-	tokenizer tok(_name, sep);
-	tokenizer::iterator beg = tok.begin();
-	tokenizer::iterator beg1 = beg;
-
-	int i = 0;
-	//this solution could be done a bit better
-	for(; beg != tok.end(); beg++)
-	{
-		i++;
-	}
-	if(i==2)
-	{
-		std::string node = *beg1;
-		std::string id   = *++beg1;
-		int i = std::stoi(id);
-		Node *n = m_current->getNode(node, i);
-
-		Graph *g = dynamic_cast<Graph*>(n);
-		if(g == NULL)
-		{
-			std::cout<<"failed to transfer\n";
-		}
-		return n;
-	}
-	else
-	{
-		std::cout<<"Node path is wrong\n";
-		return new Node;
-	}
 }
 
 void Context::addInputSlot(const std::string &_name, const SVariable &_var)
@@ -239,7 +161,7 @@ void Context::goUpALevel()
 
 void Context::goDownALevel(const std::string &_name)
 {
-	Graph *g = dynamic_cast<Graph*>(getNodeFromString(_name));
+	Graph *g = dynamic_cast<Graph*>(Utilities::findNode(m_current, _name));
 	if(g == NULL)
 	{
 		std::cout<<"failed to go down\n";
@@ -261,7 +183,7 @@ void Context::printDB() const
 
 void Context::changeConstValue(const std::string &_node, const std::string &_value)
 {
-	Node *n = getNodeFromString(_node);
+	Node *n = Utilities::findNode(m_current, _node);
 	ConstantMap::iterator it;
 	it = m_constants.find(n);
 	(*it).second = _value;
