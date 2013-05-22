@@ -41,30 +41,38 @@ Node *NodeFactory::createNode(const std::string &_name,  const nodeType &_type)
 		std::cout<<"returning "<<n->getName()<<'\n';
 		return n;
 	}
-	switch(_type)
+	else
 	{
-		case nodeType::GRAPH:
-			std::cout<<"constructing new graph"<<'\n';
-			n = new Graph();
-			n->setName(_name);
-			break;
-		case nodeType::STATE:
-			std::cout<<"STATE"<<'\n';
-			break;
-		case nodeType::FUNCTION:
-			std::cout<<"EXPRESSION\n";
-			break; 
-		case nodeType::OPERATOR:
-			std::cout<<"EXPRESSION\n";
-			break; 
-		case nodeType::CONSTRUCTOR:
-			std::cout<<"CONSTRUCTOR\n";
-			break; 
-		case nodeType::CONSTANT:
-			std::cout<<"CONSTANT\n";
-			break; 
+		n = new Graph();
+		n->setName(_name);
+		return n;
 	}
-	return n;
+	/*
+	   switch(_type)
+	   {
+	   case nodeType::GRAPH:
+	   std::cout<<"constructing new graph"<<'\n';
+	   n = new Graph();
+	   n->setName(_name);
+	   break;
+	   case nodeType::STATE:
+	   std::cout<<"STATE"<<'\n';
+	   break;
+	   case nodeType::FUNCTION:
+	   std::cout<<"EXPRESSION\n";
+	   break; 
+	   case nodeType::OPERATOR:
+	   std::cout<<"EXPRESSION\n";
+	   break; 
+	   case nodeType::CONSTRUCTOR:
+	   std::cout<<"CONSTRUCTOR\n";
+	   break; 
+	   case nodeType::CONSTANT:
+	   std::cout<<"CONSTANT\n";
+	   break; 
+	   }
+	   return n;
+	   */
 }
 
 void NodeFactory::InitDB()

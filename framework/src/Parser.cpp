@@ -15,63 +15,75 @@ const char* Parser::NODEOUTPUTS = "outputs";
 const char* Parser::NODESLOT = "slot";
 const char* Parser::SLOTSOURCE = "source";
 
+
 Node* Parser::parseNode(const xmlDocPtr &_doc, xmlNodePtr _cur, std::map<std::string, std::string> *_map)
 { 
-
 	EnumParser<nodeType> ep;
 	std::string name = (const char*)parseAttribute(_cur, "name");
 	std::string type = (const char*)parseAttribute(_cur, "type");
+	std::string id = (const char*)parseAttribute(_cur, "id");
 	nodeType t = ep.parseEnum(type.c_str());
 	Node *temp;
-	_cur = _cur->xmlChildrenNode;
-
+	std::map<std::string, std::string> connectionMap;
+	_cur = _cur->children;
 	if(t == nodeType::GRAPH)
 	{
 		std::cout<<"node type is graph"<<'\n';
-		std::map<std::string, std::string> connectionMap;
 		Graph *temp2 = new Graph();
 		temp2->setName(name);
+	//	temp2->setID(std::stoi(id));
+		printElementNames(_cur);
 		while(_cur != NULL) {
 			if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOT)) 
 			{
-				temp2->add(parseSlot(temp2, _doc, _cur, _map));
+				if ( _map == NULL)
+				{	
+					temp2->add(parseSlot(temp2, _doc, _cur, &connectionMap));
+				}
+				else
+				{
+					temp2->add(parseSlot(temp2, _doc, _cur, _map));
+				}
+
 			}
 			if(!xmlStrcmp(_cur->name, (const xmlChar *)NODE))
 			{
-				temp2->addNode(parseNode(_doc, _cur, &connectionMap));
+				Node *n = parseNode(_doc, _cur, &connectionMap);
+				temp2->addNode(n);
+				std::cout<<"added node "<<n->getName()<<"address "<<n<<" ID "<<n->getID()<<'\n';
 			}
 			_cur = _cur->next;
 		}
-
 		if(connectionMap.begin() != connectionMap.end())
 		{
 			std::map <std::string, std::string>::const_iterator it;
 			for(it = connectionMap.begin(); it != connectionMap.end(); it++)
 			{
+				std::cout<<"connection map "<<it->first<<"  "<<it->second<<'\n';
 				makeConnection(temp2, it->first, it->second);
 			}
 		}
-		connectionMap.clear();
-
 		temp = temp2;
 	}
 	else
 	{
 		temp = new Node();
 		temp->setName(name);
+		//temp->setID(std::stoi(id));
 		while(_cur != NULL) {
 			if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOT)) {
-				temp->add(parseSlot(temp, _doc, _cur));
+				temp->add(parseSlot(temp, _doc, _cur, _map));
 			}
 			_cur = _cur->next;
 		}
 	}
 
 	temp->setType(t);
+	std::cout<<"parsing node "<<name<<"address "<<temp<<" ID "<<temp->getID()<<'\n';
 	return temp;
 }
 
-Slot* Parser::parseSlot(Node *_in,const xmlDocPtr &_doc, xmlNodePtr _cur, std::map<std::string, std::string> *_map)
+Slot* Parser::parseSlot(Node *_parent,const xmlDocPtr &_doc, xmlNodePtr _cur, std::map<std::string, std::string> *_map)
 {
 	Slot *s = 0;
 	xmlChar *name,*type, *var; 
@@ -79,55 +91,49 @@ Slot* Parser::parseSlot(Node *_in,const xmlDocPtr &_doc, xmlNodePtr _cur, std::m
 	type = parseAttribute(_cur,  "type");
 	var = parseAttribute(_cur,  "var");
 	EnumParser<SVariable> p;
-	if(!strcmp((const char*)type, "input")) 
+	EnumParser<Stype> p2;
+	s = new Slot(
+			_parent,
+			(const char*)name,
+			p2.parseEnum((const char*)type),
+			p.parseEnum((const char*)var)
+			);
+	_cur=_cur->children;
+	while(_cur !=NULL)
 	{
-		s = new Slot(
-				_in,
-				(const char*)name,
-				Stype::input,
-				p.parseEnum((const char*)var)
-				);
-
-		xmlNodePtr cur2 = _cur->children;
-		while(cur2 != NULL) {
-
-			std::cout<<cur2->name<<'\n';
-			if(!xmlStrcmp(cur2->name, (const xmlChar *)SLOTSOURCE)) 
-			{
-				std::string input, output;
-				xmlChar *sourcenode, *sourceid, *sourceslot;
-				sourcenode = parseAttribute(cur2, "node");
-				sourceid = parseAttribute(cur2, "id");
-				sourceslot = parseAttribute(cur2,  "slot");
-
-				input = _in->getName()+"."+ _in->getID()+"."+ (char *)name;
-				output = (char*)sourcenode;
-				output += ".";
-				output += (char*)sourceid;
-				output += ".";
-				output += (char*)sourceslot;
-				_map->insert(std::pair<std::string, std::string>(input, output));
-			}
-			cur2 = cur2->next;
+		if(!xmlStrcmp(_cur->name, (const xmlChar *)SLOTSOURCE))
+		{
+			std::cout<<"in source slot"<<'\n';
+			std::string output, input;
+			input = _parent->getName()+"."+ _parent->getID()+"."+ (char *)name;
+			output = parseSource(_cur, _map);
+			_map->insert(std::pair<std::string, std::string>(input, output));
 		}
+		_cur=_cur->next;
 	}
-	else 
-	{
-		s = new Slot(
-				_in,
-				(const char*)name,
-				Stype::output,
-				p.parseEnum((const char*)var)
-				);
-	}
-
 	xmlFree(name);
 	xmlFree(type);
 	xmlFree(var);
-	_cur = _cur->next;
 	return s;
 }
 
+
+std::string Parser::parseSource(xmlNodePtr _cur, std::map<std::string, std::string> *_connections)
+{
+	std::string output;
+	xmlChar *sourcenode, *sourceid, *sourceslot;
+	sourcenode = parseAttribute(_cur, "node");
+	sourceid = parseAttribute(_cur, "id");
+	sourceslot = parseAttribute(_cur,  "slot");
+	output = (char*)sourcenode;
+	std::cout<<output<<'\n';
+	output += ".";
+	output += (char*)sourceid;
+	output += ".";
+	output += (char*)sourceslot;
+	std::cout<<output<<'\n';
+	return output;
+}
 
 xmlChar* Parser::parseAttribute(xmlNodePtr _cur, const char* _key)
 {
@@ -155,8 +161,9 @@ void Parser::printElementNames(xmlNodePtr _cur)
 {
 	xmlNode *cur_node = NULL;
 	for (cur_node = _cur; cur_node; cur_node = cur_node->next) {
-		if (cur_node->type == XML_ELEMENT_NODE) {
-			//std::cout<<"nodename "<< cur_node->name <<'\n';
+		if (cur_node->type == XML_ELEMENT_NODE)
+		{
+			std::cout<<"nodename "<< cur_node->name <<'\n';
 		}
 		printElementNames(cur_node->children);
 	}

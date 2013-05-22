@@ -1,5 +1,6 @@
 #include "EnumParser.h"
 #include "Enum.h"
+#include "Slot.h"
 
 template <>
 EnumParser<SVariable>::EnumParser()
@@ -22,4 +23,11 @@ EnumParser<nodeType>::EnumParser()
 	enumMap["state"] =nodeType::STATE;
 	enumMap["constructor"] = nodeType::CONSTRUCTOR;
 	enumMap["constant"] = nodeType::CONSTANT;
+}
+
+template <>
+EnumParser<Stype>::EnumParser()
+{
+	enumMap["input"] = Stype::INPUT;
+	enumMap["output"] = Stype::OUTPUT;
 }

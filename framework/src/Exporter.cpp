@@ -66,6 +66,7 @@ void XMLExporter::write(const Node *_n)
 	switch (_n->getType())
 	{
 		case nodeType::STATE:
+			writeSlots(_n);
 			break;
 
 		case nodeType::OPERATOR:
@@ -100,9 +101,6 @@ void XMLExporter::write(const Node *_n)
 	}
 	xmlTextWriterEndElement(m_writer);
 }
-
-
-
 
 void XMLExporter::writeSlots(const Node *_n)
 {

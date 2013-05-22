@@ -101,6 +101,12 @@ class Context
 		 * \param _value the new value of the constant
 		 */
 		void changeConstValue(const std::string &_node, const std::string &_value);
+		/* \brief List all nodes of the current context
+		 * 
+		 * \param _node constant node to be changed
+		 * \param _value the new value of the constant
+		 */
+		void listCurrent();
 	private:
 
 		/* \brief get Slot according to string

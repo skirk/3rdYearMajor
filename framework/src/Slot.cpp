@@ -52,7 +52,7 @@ Stype Slot::getType() const
 
 bool Slot::isInput() const
 {
-	return  m_type == Stype::input;
+	return  m_type == Stype::INPUT;
 }
 
 Slot *Slot::clone()
@@ -71,9 +71,16 @@ void Slot::setParent(Node *_n)
 }
 void Slot::linkToSlot(Slot *_s)
 {
+	EnumParser<SVariable>  p;
+	if(m_var != p.parseEnum(_s->getVar().c_str()))
+	{
+		std::cout<<"Types do not match"<<'\n';
+		return;
+	}
 	m_link = _s;
 	m_override=true;
 	std::cout<<"connection formed"<<'\n';
+	return;
 }
 
 void Slot::removeLink()

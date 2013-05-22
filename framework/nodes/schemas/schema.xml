@@ -45,7 +45,16 @@
 		</xs:restriction>
 	</xs:simpleType>
 	<!-- slot type -->
+	<xs:complexType name="sourceType">
+		<xs:attribute name="node" type="xs:string"/>
+		<xs:attribute name="id" type="idType"/>
+		<xs:attribute name="slot" type="xs:string"/>
+	</xs:complexType>
+	<xs:element name="source" type="sourceType"/>
 	<xs:complexType name="slotType">
+		<xs:sequence>
+			<xs:element ref="source" minOccurs="0" maxOccurs="unbounded"/>	
+		</xs:sequence>
 		<xs:attribute name="name" type="xs:string"/>
 		<xs:attribute name="type" type="InputOrOutput"/>
 		<xs:attribute name="var" type="slotVar"/>
@@ -70,7 +79,7 @@
 			</xs:sequence>
 			<xs:attribute ref="name" use="required"/>
 			<xs:attribute name="sheet" type="sheetType"/>
-			<xs:attribute name="id" type="idType"/>
+			<xs:attribute name="id" type="idType" use="required"/>
 			<xs:attribute name="type" type="nodeType" use="required"/>
 		</xs:complexType>
 	</xs:element>

@@ -20,15 +20,12 @@ Node *Graph::getNode(const std::string &_name, int _id)
 	NodeVec::iterator it;
 	for (it = m_nodes.begin(); it != m_nodes.end(); ++it)
 	{
-		std::cout<<"in get Node\n";
 		Node *n = *it;
 		if(n->getName() == _name)
 		{
-			std::cout<<"name matches\n";
 			int i = std::stoi(n->getID());
 			if(i == _id)
 			{
-				std::cout<<"id matches\n";
 				return n;
 			}
 		}
@@ -40,9 +37,7 @@ Node *Graph::getNode(const std::string &_name, int _id)
 
 void Graph::addNode(Node *_n)
 {
-	int id = 0;
-	
-	std::cout<<"adding Node "<<_n->getName()<<" into "<<m_name<<'\n';
+	int id = std::stoi(_n->getID());
 	while( getNode(_n->getName(), id)->getName() != "empty")
 	{
 		id++;

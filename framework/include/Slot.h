@@ -10,7 +10,7 @@
 #include <string>
 #include "Enum.h"
 
-enum class Stype { input = 1<<0, output= 1<<1
+enum class Stype { INPUT = 1<<0, OUTPUT= 1<<1
 };
 
 inline const bool

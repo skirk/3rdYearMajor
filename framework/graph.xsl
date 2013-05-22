@@ -10,10 +10,11 @@
 	</xsl:template>
 
 	<xsl:template match="root">
-		<xsl:apply-templates select="shader"/>
+		<xsl:apply-templates select="'node' or 'shader'"/>
 	</xsl:template>
 
 	<xsl:template match="shader">
+		<xsl:apply-templates select="node[@type='diagram']"/>
 		<xsl:text>#version 400&#xA;</xsl:text>
 		<xsl:value-of select="normalize-space()"/>
 		<xsl:apply-templates select="import"/>
@@ -52,6 +53,10 @@
 		</xsl:for-each>
 
 		<xsl:text>&#xA;}&#xA;</xsl:text>
+	</xsl:template>
+
+	<xsl:template match="node[@type='diagram']">
+		<xsl:apply-templates select="node[@name='[@*']"/>
 	</xsl:template>
 
 

@@ -5,6 +5,7 @@
 #include "NodeFactory.h"
 #include "DataBase.h"
 #include "Exporter.h"
+#include "EnumParser.h"
 
 #include <iostream>
 #include <cstdlib>
@@ -26,13 +27,13 @@ void Context::connectSlots(const std::string &_lhs, const std::string &_rhs)
 	Slot *lhs = Utilities::findSlot(m_current, _lhs);
 	if(lhs->getName()=="empty")
 	{
-		std::cout<<"target slot doesn't exist"<<'\n';
+		std::cout<<"path "<<_lhs<<" is invalid or slot doesn't exist"<<'\n';
 		return;
 	}
 	Slot *rhs = Utilities::findSlot(m_current, _rhs);
 	if(rhs->getName()=="empty")
 	{
-		std::cout<<"source slot doesn't exist"<<'\n';
+		std::cout<<"path "<<_rhs<<" is invalid or slot doesn't exist"<<'\n';
 		return;
 	}
 	//could do with better solution
@@ -58,13 +59,11 @@ void Context::connectSlots(const std::string &_lhs, const std::string &_rhs)
 		if(b_lhs)
 		{
 			lhs->linkToSlot(rhs);
-			std::cout<<"connection formed\n";
 			return;
 		}
 		else if (b_rhs)
 		{
 			rhs->linkToSlot(lhs);
-			std::cout<<"connection formed\n";
 			return;
 		}
 	}
@@ -84,7 +83,7 @@ void Context::disconnectSlots(const std::string &_inputSlot)
 
 void Context::addInputSlot(const std::string &_name, const SVariable &_var)
 {
-	Slot* s = new Slot(m_current, _name.c_str(), Stype::input, _var);
+	Slot* s = new Slot(m_current, _name.c_str(), Stype::INPUT, _var);
 	if(m_current->getParent() == NULL)
 	{
 		m_globalinputs.push_back(s);
@@ -93,7 +92,7 @@ void Context::addInputSlot(const std::string &_name, const SVariable &_var)
 }
 void Context::addOutputSlot(const std::string &_name,  const SVariable &_var)
 {
-	Slot* s = new Slot(m_current, _name.c_str(), Stype::output, _var);
+	Slot* s = new Slot(m_current, _name.c_str(), Stype::OUTPUT, _var);
 	if(m_current->getParent() == NULL)
 	{
 		m_globaloutputs.push_back(s);
@@ -109,6 +108,7 @@ void Context::addNode(const std::string &_name)
 	m_current->addNode(n);
 	if(n->getType() == nodeType::STATE)
 	{
+		std::cout<<"added to uniform inputs"<<'\n';
 		m_uniforminputs.push_back(*n->begin());
 	}
 	if(n->getType() == nodeType::CONSTANT)
@@ -162,11 +162,13 @@ void Context::goUpALevel()
 void Context::goDownALevel(const std::string &_name)
 {
 	Graph *g = dynamic_cast<Graph*>(Utilities::findNode(m_current, _name));
-	if(g == NULL)
+	std::cout<<"the downers name "<<g->getName()<<'\n';
+	if(g->getName() == "empty")
 	{
 		std::cout<<"failed to go down\n";
 		return;
 	}
+	std::cout<<"going down\n";
 	m_current=g;
 }
 
@@ -187,4 +189,22 @@ void Context::changeConstValue(const std::string &_node, const std::string &_val
 	ConstantMap::iterator it;
 	it = m_constants.find(n);
 	(*it).second = _value;
+}
+
+void Context::listCurrent()
+{
+	Graph::nodeiterator it = m_current->NodeBegin();
+	Container<Slot>::iterator sit = m_current->begin();
+	EnumParser<Stype> p;
+	std::cout<<"Slots of the current context"<<'\n';
+	for(; sit != m_current->end(); sit++){
+		std::cout<<"\t"<<"slot: "<<(*sit)->getName()<<" type "<<p.lookupEnum((*sit)->getType())<<'\n';
+	}
+	std::cout<<"Nodes of the current context"<<'\n';
+	for(; it != m_current->NodeEnd(); it++){
+		std::cout<<'\t'<<"Name "<<(*it)->getName()<<" ID "<<(*it)->getID()<<'\n';
+		for(sit=(*it)->begin(); sit != (*it)->end(); sit++){
+			std::cout<<"\t\t"<<"slot: "<<(*sit)->getName()<<", type "<<p.lookupEnum((*sit)->getType())<<'\n';
+		}
+	}
 }

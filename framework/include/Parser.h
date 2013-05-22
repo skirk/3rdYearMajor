@@ -36,13 +36,23 @@ class Parser
 		 * \param _doc document to parse
 		 * \param _node node structure to iterate through
 		 */
-		Node* parseNode(const xmlDocPtr &_doc, xmlNodePtr _node, std::map<std::string, std::string> *_map=0);
+		Node* parseNode(const xmlDocPtr &_doc, xmlNodePtr _node, std::map<std::string, std::string> *_map = NULL);
 		/*! \brief ParseSLot from given document and xmlNode.
 		 *
+		 * \param _parent the parent of the slot
 		 * \param _doc document to parse
 		 * \param _node node structure to iterate through
 		 */
-		Slot* parseSlot(Node *_in, const xmlDocPtr &_doc, xmlNodePtr _node, std::map<std::string, std::string> *_map = 0);
+		Slot* parseSlot(Node *_parent, const xmlDocPtr &_doc, xmlNodePtr _node, std::map<std::string, std::string> *_map);
+
+
+		/*! \brief ParseSLot from given document and xmlNode.
+		 *
+		 * \param _parent the parent Node of the current Slot
+		 * \param _cur  tree structure
+		 * \param _connections map of connections to extend if source exists
+		 */
+		std::string parseSource(xmlNodePtr _cur, std::map<std::string, std::string> *_connections);
 		/*! \brief Parse a attribute out of node if any
 		 * 
 		 * \param _cur node to parse
