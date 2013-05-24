@@ -13,6 +13,7 @@ const char* NodeFactory::SHEET="sheet";
 const char* NodeFactory::NAME="name";
 const char* NodeFactory::NODE="node";
 const char* NodeFactory::ROOT="root";
+const char* NodeFactory::OPERATORS = "operators";
 
 NodeFactory* NodeFactory::m_instance = NULL;
 
@@ -90,7 +91,7 @@ void NodeFactory::InitDB()
 			cur = xmlDocGetRootElement(docvec[i]);
 			while(cur != NULL)
 			{
-				if(!xmlStrcmp(cur->name, (const xmlChar *)ROOT))
+				if(!xmlStrcmp(cur->name, (const xmlChar *)ROOT) || !xmlStrcmp(cur->name, (const xmlChar *)OPERATORS))
 				{
 					cur2 = cur->children;
 					while(cur2 != NULL)

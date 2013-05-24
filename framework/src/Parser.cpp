@@ -34,7 +34,7 @@ Node* Parser::parseNode(const xmlDocPtr &_doc, xmlNodePtr _cur, std::map<std::st
 	//	temp2->setID(std::stoi(id));
 		printElementNames(_cur);
 		while(_cur != NULL) {
-			if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOT)) 
+			if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOT) )
 			{
 				if ( _map == NULL)
 				{	

@@ -24,6 +24,7 @@ class NodeFactory
 		static const char* NAME;
 		static const char* NODE;
 		static const char* ROOT;
+		static const char* OPERATORS;
 
 	public:
 		
