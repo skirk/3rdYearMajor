@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root>
+  <shader>
+    <import name="vert_position" type="vec4" parent="root" id="0"/>
+    <import name="vert_normal" type="vec4" parent="root" id="0"/>
+    <export name="gl_Position" type="vec4" parent="root" id="0"/>
+    <export name="outColor" type="vec4" parent="root" id="0"/>
+    <uniforms name="out1" type="mat4" parent="ModelView" id="0"/>
+    <uniforms name="out1" type="mat4" parent="NormalMatrix" id="0"/>
+    <node name="root" id="0" type="graph">
+      <slot name="vert_position" type="input" var="vec4"/>
+      <slot name="vert_normal" type="input" var="vec4"/>
+      <slot name="gl_Position" type="output" var="vec4"/>
+      <slot name="outColor" type="output" var="vec4"/>
+      <node name="toEyeCoord" id="0" type="graph">
+        <slot name="position" type="input" var="vec4">
+          <source node="root" id="0" slot="vert_position"/>
+        </slot>
+        <slot name="normal" type="input" var="vec4">
+          <source node="root" id="0" slot="vert_normal"/>
+        </slot>
+        <slot name="eyepos" type="output" var="vec4">
+          <source node="MultiplyMat4Vec4" id="0" slot="out1"/>
+        </slot>
+        <slot name="eyenormal" type="output" var="vec4">
+          <source node="Multiply" id="0" slot="out1"/>
+        </slot>
+        <node name="ModelView" id="0" type="state">
+          <slot name="out1" type="output" var="mat4"/>
+        </node>
+        <node name="NormalMatrix" id="0" type="state">
+          <slot name="out1" type="output" var="mat4"/>
+        </node>
+        <node name="MultiplyMat4Vec4" id="0" type="operator">
+          <slot name="in1" type="input" var="vec4">
+            <source node="toEyeCoord" id="0" slot="position"/>
+          </slot>
+          <slot name="in2" type="input" var="mat4">
+            <source node="ModelView" id="0" slot="out1"/>
+          </slot>
+          <slot name="out1" type="output" var="vec4"/>
+        </node>
+        <node name="Multiply" id="0" type="operator">
+          <slot name="in1" type="input" var="vec4">
+            <source node="toEyeCoord" id="0" slot="normal"/>
+          </slot>
+          <slot name="in2" type="input" var="mat4">
+            <source node="NormalMatrix" id="0" slot="out1"/>
+          </slot>
+          <slot name="out1" type="output" var="vec4"/>
+        </node>
+      </node>
+    </node>
+  </shader>
+</root>

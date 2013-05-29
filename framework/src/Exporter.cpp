@@ -24,11 +24,13 @@ void XMLExporter::open(const std::string &_filename, const std::string &_element
 	xmlDocSetRootElement(m_doc, m_node);
 	m_writer = xmlNewTextWriterTree(m_doc,m_node, 0); 
 	xmlTextWriterStartDocument(m_writer, NULL, MY_ENCODING, NULL);
+	xmlTextWriterStartElement(m_writer, BAD_CAST _element.c_str());
 	m_file = _filename;
 }
 
 void XMLExporter::close()
 {
+	xmlTextWriterEndElement(m_writer);
 	xmlFreeTextWriter(m_writer);
 	xmlSaveFormatFileEnc(m_file.c_str(), m_doc, MY_ENCODING, 1); 
 	xmlCleanupParser();
@@ -82,8 +84,8 @@ void XMLExporter::write(const Node *_n)
 				const Graph *g = dynamic_cast<const Graph*>(_n);
 				if (g != NULL)
 				{
-					Graph::nodeiterator it = g->NodeBegin() ; 
-					for(; it != g->NodeEnd(); ++it)
+					Graph::nodeiterator it = g->nodeBegin() ; 
+					for(; it != g->nodeEnd(); ++it)
 						write(*it);
 				}
 				break;

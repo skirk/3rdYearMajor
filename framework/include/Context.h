@@ -120,6 +120,11 @@ class Context
 		 */
 		Node *getNodeFromString(const std::string &_name);
 
+		/* \brief get Node according to string
+		 *
+		 * \param _name path of the node
+		 */
+		void checkForStates(Graph *_g);
 };
 
 

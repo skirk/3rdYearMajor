@@ -3,24 +3,24 @@
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xi="http://www.w3.org/2001/XInclude">
-	<xsl:output method="text"/>
+	<xsl:output method="text" indent="no"/>
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="root"/>
 	</xsl:template>
 
 	<xsl:template match="root">
-		<xsl:apply-templates select="'node' or 'shader'"/>
-	</xsl:template>
-
-	<xsl:template match="shader">
-		<xsl:apply-templates select="node[@type='diagram']"/>
-		<xsl:text>#version 400&#xA;</xsl:text>
-		<xsl:value-of select="normalize-space()"/>
+#version 400
 		<xsl:apply-templates select="import"/>
 		<xsl:apply-templates select="export"/>
 		<xsl:apply-templates select="uniforms"/>
-		<xsl:apply-templates select="node[@name='root']"/>
+
+		<xsl:apply-templates select="node[@type='graph']"/>
+		<xsl:value-of select="normalize-space()"/>
+	</xsl:template>
+
+	<xsl:template match="shader">
+		<xsl:apply-templates select="node[@type='graph']"/>
 	</xsl:template>
 
 	<xsl:template match="node[@name='root']">
@@ -55,8 +55,20 @@
 		<xsl:text>&#xA;}&#xA;</xsl:text>
 	</xsl:template>
 
-	<xsl:template match="node[@type='diagram']">
-		<xsl:apply-templates select="node[@name='[@*']"/>
+	<xsl:template match="node[@type='graph']">	
+		<xsl:apply-templates select="node[@type='graph']"/>
+		<xsl:for-each select="node[@type='function']">
+		</xsl:for-each>
+		<xsl:for-each select="node[@type='state']">
+			<xsl:text>state&#xA;</xsl:text>
+		</xsl:for-each>
+		<xsl:for-each select="node[@type='constant']">
+			<xsl:text>constant&#xA;</xsl:text>
+			<xsl:text>function&#xA;</xsl:text>
+		</xsl:for-each>
+		<xsl:for-each select="node[@type='operator']">
+			<xsl:text>operator&#xA;</xsl:text>
+		</xsl:for-each>
 	</xsl:template>
 
 
@@ -278,6 +290,17 @@
 		</xsl:for-each>
 
 	</xsl:template>
+	<xsl:template match="node[@type='operator']" mode="call">
+		<xsl:variable name="callID">
+			<xsl:value-of select="concat( generate-id(), @id )" />	
+		</xsl:variable>	
+	</xsl:template>
+
+	<xsl:template match="node[@type='operator']" mode="getOutput">
+		<xsl:variable name="callID">
+			<xsl:value-of select="concat( generate-id(), @id )" />
+		</xsl:variable>
+		<xsl:value-of select="concat( 'comb', $functionCallID )" />
+	</xsl:template>
 
 </xsl:stylesheet>
-

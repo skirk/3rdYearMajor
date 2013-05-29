@@ -8,6 +8,8 @@ c.printDB()
 
 c.listCurrent()
 
+c.addNode("toEyeCoord")
+c.goDownALevel("toEyeCoord.0")
 c.addInputSlot('position', VEC4)
 c.addInputSlot('normal', VEC4)
 c.addOutputSlot('eyepos', VEC4)

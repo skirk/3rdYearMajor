@@ -50,12 +50,12 @@ class Graph : public Node
 		 *
 		 * This method is used by PythonWrapper to iterate through the vector
 		 */
-		NodeVec::const_iterator NodeBegin() const; 
+		NodeVec::const_iterator nodeBegin() const; 
 		/* \brief Returns and iterator to the last element of m_nodes vector.
 		 *
 		 * This method is used by PythonWrapper to iterate through the vector
 		 */
-		NodeVec::const_iterator NodeEnd() const;
+		NodeVec::const_iterator nodeEnd() const;
 		/* \brief Returns and iterator to the last element of m_nodes vector.
 		 *
 		 * This method is used by PythonWrapper to iterate through the vector

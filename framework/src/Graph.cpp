@@ -3,12 +3,12 @@
 
 #include <iostream>
 
-Graph::NodeVec::const_iterator Graph::NodeBegin() const
+Graph::NodeVec::const_iterator Graph::nodeBegin() const
 {
 	return m_nodes.begin();
 }
 
-Graph::NodeVec::const_iterator Graph::NodeEnd() const
+Graph::NodeVec::const_iterator Graph::nodeEnd() const
 {
 	return m_nodes.end();
 }

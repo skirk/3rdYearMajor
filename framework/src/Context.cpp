@@ -100,34 +100,65 @@ void Context::addOutputSlot(const std::string &_name,  const SVariable &_var)
 	m_current->add(s);
 }
 
+void Context::checkForStates(Graph *_g)
+{
+	std::cout<<"CHECKING FOR STATES\n";
+	Graph::nodeiterator it = _g->nodeBegin();
+	for(; it != _g->nodeEnd(); it++)
+	{
+		if((*it)->getType()== nodeType::STATE)
+		{
+			m_uniforminputs.push_back(*(*it)->begin());
+		}
+		if((*it)->getType()== nodeType::GRAPH)
+		{
+
+			Graph *temp = dynamic_cast<Graph*>(*it);
+			checkForStates(temp);
+		}
+	}
+}
+
 void Context::addNode(const std::string &_name)
 {
 	NodeFactory &fact = NodeFactory::getInstance();
 	Node *n =fact.createNode(_name, nodeType::GRAPH)->clone();
 	n->setParent(m_current);
 	m_current->addNode(n);
-	if(n->getType() == nodeType::STATE)
-	{
-		std::cout<<"added to uniform inputs"<<'\n';
-		m_uniforminputs.push_back(*n->begin());
-	}
-	if(n->getType() == nodeType::CONSTANT)
-	{
-		std::cout<<"inserting stuff\n";
-		std::cout<<n<<'\n';
-		for(Node::iterator it = n->begin(); it != n->end(); it++)
-		{
-			std::cout<<(*it)->getParent()<<'\n';
 
-		}
-		m_constants.insert(std::pair<Node*, std::string>(n, ""));
+	switch(n->getType())
+	{
+		case nodeType::STATE:
+			{
+				std::cout<<"added to uniforms"<<'\n';
+				m_uniforminputs.push_back(*n->begin());
+				break;
+			}
+		case nodeType::CONSTANT:
+			{
+				for(Node::iterator it = n->begin(); it != n->end(); it++)
+				{
+					std::cout<<(*it)->getParent()<<'\n';
+				}
+				m_constants.insert(std::pair<Node*, std::string>(n, ""));
+				break;
+			}
+		case nodeType::GRAPH:
+			{
+				std::cout<<"CHECKING FOR STATES\n";
+				Graph *temp = dynamic_cast<Graph*>(n);
+				checkForStates(temp);
+				break;
+			}
+		default:
+			break;
 	}
 }
 
 void Context::writeCurrentNode(const std::string &_file)
 {
 	XMLExporter exp(&m_constants);
-	exp.open(_file, "nodes");
+	exp.open(_file, "");
 	exp.write(m_current);
 	exp.close();
 }
@@ -143,6 +174,7 @@ void Context::writeShader(const std::string &_file)
 	exp.writeHeader(m_globalinputs, "import");
 	exp.writeHeader(m_globaloutputs, "export");
 	exp.writeHeader(m_uniforminputs, "uniforms");
+	Graph::nodeiterator it = m_current->nodeBegin();
 	exp.write(m_current);
 	exp.close();
 }
@@ -180,7 +212,6 @@ void Context::printDB() const
 	for(; it != db->end(); it++){
 		std::cout<<(*it)->getName()<<'\n';
 	}
-
 }
 
 void Context::changeConstValue(const std::string &_node, const std::string &_value)
@@ -193,7 +224,7 @@ void Context::changeConstValue(const std::string &_node, const std::string &_val
 
 void Context::listCurrent()
 {
-	Graph::nodeiterator it = m_current->NodeBegin();
+	Graph::nodeiterator it = m_current->nodeBegin();
 	Container<Slot>::iterator sit = m_current->begin();
 	EnumParser<Stype> p;
 	std::cout<<"Slots of the current context"<<'\n';
@@ -201,7 +232,7 @@ void Context::listCurrent()
 		std::cout<<"\t"<<"slot: "<<(*sit)->getName()<<" type "<<p.lookupEnum((*sit)->getType())<<'\n';
 	}
 	std::cout<<"Nodes of the current context"<<'\n';
-	for(; it != m_current->NodeEnd(); it++){
+	for(; it != m_current->nodeEnd(); it++){
 		std::cout<<'\t'<<"Name "<<(*it)->getName()<<" ID "<<(*it)->getID()<<'\n';
 		for(sit=(*it)->begin(); sit != (*it)->end(); sit++){
 			std::cout<<"\t\t"<<"slot: "<<(*sit)->getName()<<", type "<<p.lookupEnum((*sit)->getType())<<'\n';
