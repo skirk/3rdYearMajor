@@ -90,6 +90,7 @@ void Context::addInputSlot(const std::string &_name, const SVariable &_var)
 	}
 	m_current->add(s);
 }
+
 void Context::addOutputSlot(const std::string &_name,  const SVariable &_var)
 {
 	Slot* s = new Slot(m_current, _name.c_str(), Stype::OUTPUT, _var);
@@ -159,7 +160,7 @@ void Context::writeCurrentNode(const std::string &_file)
 {
 	XMLExporter exp(&m_constants);
 	exp.open(_file, "");
-	exp.write(m_current);
+	exp.write(m_current, "node");
 	exp.close();
 }
 
@@ -171,11 +172,9 @@ void Context::writeShader(const std::string &_file)
 	}
 	XMLExporter exp(&m_constants);
 	exp.open(_file, "shader");
-	exp.writeHeader(m_globalinputs, "import");
-	exp.writeHeader(m_globaloutputs, "export");
-	exp.writeHeader(m_uniforminputs, "uniforms");
+	exp.setUniforms(m_uniforminputs);
 	Graph::nodeiterator it = m_current->nodeBegin();
-	exp.write(m_current);
+	exp.write(m_current, "shader");
 	exp.close();
 }
 

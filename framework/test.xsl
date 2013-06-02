@@ -20,7 +20,7 @@
 		<xsl:value-of select="string('void main()&#xA;{&#xA; ')"/>
 		<xsl:apply-templates select="node[position()=1]" mode="call"/>
 		<!-- Export the slots -->
-		<xsl:apply-templates select="slot[@type='output']" mode="export"/>
+		<xsl:apply-templates select="export" mode="export"/>
 		<xsl:value-of select="string('}&#xA; ')"/>
 	</xsl:template>
 
@@ -32,15 +32,15 @@
 		</xsl:variable>
 		<xsl:apply-templates select="node[@type='graph']" mode="declare"/>
 		<xsl:value-of select="concat('void ', @name,$functionCallID, '( ')" />
-		<xsl:apply-templates select="slot[@type='output']" mode="declare" />
-		<xsl:apply-templates select="slot[@type='input']" mode="declare" />
+		<xsl:apply-templates select="output" mode="declare" />
+		<xsl:apply-templates select="input" mode="declare" />
 		<xsl:value-of select="string(')&#xA;{&#xA;')" />
 		<xsl:apply-templates select="node[position()=1]" mode="call" />
-		<xsl:apply-templates select="slot[@type='output']" mode="export" />
+		<xsl:apply-templates select="output" mode="export" />
 		<xsl:value-of select="string('}&#xA;')" />
 	</xsl:template>
 	<!-- function output parameters -->
-	<xsl:template match="slot[@type='output']" mode="declare">
+	<xsl:template match="output" mode="declare">
 		<xsl:if test="position()!=1">
 			<xsl:value-of select="string(',')" />
 		</xsl:if>
@@ -48,12 +48,12 @@
 	</xsl:template>
 
 	<!-- function input parameters -->
-	<xsl:template match="slot[@type='input']" mode="declare">
+	<xsl:template match="input" mode="declare">
 		<xsl:value-of select="concat(', in ',@var, ' ', @name)" />
 	</xsl:template>
-	<xsl:template match="slot[@type='output']" mode="declareOutputVariables">
+	<xsl:template match="output" mode="declareOutputVariables">
 		<xsl:param name="functionCallID" />
-		<xsl:value-of select="concat( @type, ' ', @name, $functionCallID, '&#xA;')" />
+		<xsl:value-of select="concat(@var,' ',@name, $functionCallID,';&#xA;')" />
 	</xsl:template>
 
 
@@ -64,7 +64,7 @@
 			<xsl:value-of select="concat( generate-id(), @id )" />
 		</xsl:variable>
 		<xsl:variable name="result">
-			<xsl:value-of select="slot[@type='output']/@var" />
+			<xsl:value-of select="output/@var" />
 		</xsl:variable>
 		<xsl:value-of select="concat($result, ' ')" />
 		<xsl:apply-templates select="." mode="functionCall">
@@ -78,7 +78,7 @@
 			<xsl:value-of select="concat( generate-id(), @id )" />
 		</xsl:variable>
 		<xsl:variable name="result">
-			<xsl:value-of select="slot[@type='output']/@var" />
+			<xsl:value-of select="output/@var" />
 		</xsl:variable>
 		<xsl:value-of select="concat($result, ' ')" />
 		<xsl:apply-templates select="." mode="functionCall">
@@ -94,9 +94,9 @@
 	<xsl:template match="node[@type='graph']" mode="call">
 		<xsl:apply-templates select="following-sibling::node[position()=1]" mode="call" />
 		<xsl:variable name="functionCallID">
-			<xsl:value-of select="concat( generate-id(), @id )" />
+			<xsl:value-of select="concat(generate-id(),@id)" />
 		</xsl:variable>
-		<xsl:apply-templates select="slot[@type='output']" mode="declareOutputVariables">
+		<xsl:apply-templates select="output" mode="declareOutputVariables">
 			<xsl:with-param name="functionCallID" select="$functionCallID" />
 		</xsl:apply-templates>
 		<xsl:apply-templates select="." mode="functionCall">
@@ -109,11 +109,11 @@
 	<xsl:template match="node[@type='operator']" mode="functionCall">
 		<xsl:apply-templates select="." mode="getOutput" />
 		<xsl:value-of select="string(' = ')" />
-		<xsl:apply-templates select="slot[@type='input'][position()=1]/source" mode="getOutput" />
-		<xsl:apply-templates select="slot[@type='input'][position()=1]/import" mode="getOutput" />
-		<xsl:value-of select="string(' OPERATOR ')" />
-		<xsl:apply-templates select="slot[@type='input'][position()=2]/source" mode="getOutput" />
-		<xsl:apply-templates select="slot[@type='input'][position()=2]/import" mode="getOutput" />
+		<xsl:apply-templates select="input[position()=1]/source" mode="getOutput" />
+		<xsl:apply-templates select="input[position()=1]/import" mode="getOutput" />
+		<xsl:value-of select="document('./nodes/nodes/operators.xml')/operators/node[@name=@name]/symbol" />
+		<xsl:apply-templates select="input[position()=2]/source" mode="getOutput" />
+		<xsl:apply-templates select="input[position()=2]/import" mode="getOutput" />
 		<xsl:value-of select="string(';&#xA;')" />
 	</xsl:template>
 
@@ -122,10 +122,10 @@
 		<xsl:value-of select="@name" />
 		<xsl:value-of select="$functionCallID" />
 		<xsl:value-of select="string('(')" />
-		<xsl:apply-templates select="slot[@type='output']" mode="functionCall">
+		<xsl:apply-templates select="output" mode="functionCall">
 			<xsl:with-param name="functionCallID" select="$functionCallID" />
 		</xsl:apply-templates>
-		<xsl:apply-templates select="slot[@type='input']" mode="functionCall" />
+		<xsl:apply-templates select="input" mode="functionCall" />
 		<xsl:value-of select="string(');&#xA;')" />
 	</xsl:template>
 
@@ -134,7 +134,7 @@
 		<xsl:apply-templates select="." mode="getOutput" />
 	</xsl:template>
 
-	<xsl:template match="slot[@type='output']" mode="functionCall">
+	<xsl:template match="output" mode="functionCall">
 		<xsl:param name="functionCallID" />
 		<xsl:if test="position()!=1">
 			<xsl:value-of select="string(',')" />
@@ -142,23 +142,28 @@
 		<xsl:value-of select="concat( @name, $functionCallID )" />
 	</xsl:template>
 
-	<xsl:template match="slot[@type='input']" mode="functionCall">
-		<xsl:value-of select="string(',input')" />
+	<xsl:template match="input" mode="functionCall">
+		<xsl:value-of select="string(',')" />
 		<xsl:apply-templates select="source" mode="getOutput" />
 	</xsl:template>
-
 
 	<!-- ====================== GET OUTPUTS AND VALUES ===================== -->
 	<xsl:template match="source" mode="getOutput">
 		<xsl:variable name="node" select="@node" />		
 		<xsl:variable name="id" select="@id" />		
-		asdasd
 		<xsl:apply-templates select="../../../node[@name=$node][@id=$id]" mode="getOutput">
 			<xsl:with-param name="slot" select="@slot" />
 		</xsl:apply-templates>
 		<xsl:apply-templates select="../../../../node[@name=$node][@id=$id]" mode="getOutput">
 			<xsl:with-param name="slot" select="@slot" />
 		</xsl:apply-templates>
+		<xsl:apply-templates select="../../../shader[@name=$node][@id=$id]" mode="getOutput">
+			<xsl:with-param name="slot" select="@slot" />
+		</xsl:apply-templates>
+		<xsl:apply-templates select="../../../../shader[@name=$node][@id=$id]" mode="getOutput">
+			<xsl:with-param name="slot" select="@slot" />
+		</xsl:apply-templates>
+
 	</xsl:template>
 	<!-- lookup the corresponding node to the export and get the output value -->
 	<!-- GET OUTPUTS -->
@@ -168,22 +173,33 @@
 		<xsl:variable name="functionCallID">
 			<xsl:value-of select="concat( generate-id(), @id)" />
 		</xsl:variable>
-		<xsl:apply-templates select="slot[@type='output'][@name=$slot]" mode="getOutput">
+		<xsl:apply-templates select="output[@name=$slot]" mode="getOutput">
 			<xsl:with-param name="functionCallID" select="$functionCallID"/>
 		</xsl:apply-templates>
-		<xsl:apply-templates select="slot[@type='input'][@name=$slot]" mode="getValue">
+		<xsl:apply-templates select="input[@name=$slot]" mode="getValue">
 			<xsl:with-param name="functionCallID" select="$functionCallID"/>
 		</xsl:apply-templates>
 	</xsl:template>
 
+	<xsl:template match="shader" mode="getOutput">
+		<xsl:param name="slot" />
+		<xsl:apply-templates select="import[@name=$slot]" mode="getOutput"/>
+		<xsl:apply-templates select="export[@name=$slot]" mode="getValue"/>
+	</xsl:template>
 
+	<xsl:template match="import" mode="getOutput">
+		<xsl:value-of select="@name" />
+	</xsl:template>
+	<xsl:template match="export" mode="getOutput">
+		<xsl:value-of select="@name" />
+	</xsl:template>
 	<!-- get value from a  input slot -->
-	<xsl:template match="slot[@type='input']" mode="getValue">
+	<xsl:template match="input" mode="getValue">
 		<xsl:value-of select="@name" />
 	</xsl:template>
 
 	<!-- get output from a slot -->
-	<xsl:template match="slot[@type='output']" mode="getOutput">
+	<xsl:template match="output" mode="getOutput">
 		<xsl:param name="functionCallID" />
 		<xsl:value-of select="concat(@name, $functionCallID)" />
 	</xsl:template>
@@ -212,11 +228,18 @@
 	</xsl:template>
 
 	<!-- ====================== EXPORT ===================== -->
-	<xsl:template match="slot[@type='output']" mode="export">
+	<xsl:template match="output" mode="export">
 		<xsl:value-of select="concat(@name,' = ')" />
 		<xsl:apply-templates select="source" mode="export" />
 		<xsl:value-of select="string(';&#xA;')" />
 	</xsl:template>
+
+	<xsl:template match="export" mode="export">
+		<xsl:value-of select="concat(@name,' = ')" />
+		<xsl:apply-templates select="source" mode="export" />
+		<xsl:value-of select="string(';&#xA;')" />
+	</xsl:template>
+
 
 	<xsl:template match="source" mode="export">
 		<xsl:variable name="node" select="@node" />
@@ -232,7 +255,8 @@
 				<xsl:apply-templates select="../../node[@name=$node][@id=$id]" mode="getOutput">
 					<xsl:with-param name="slot" select="@slot"/>
 				</xsl:apply-templates>
-			</xsl:when>	
+			</xsl:when>
+			<xsl:apply-templates select="source" mode="getOutput" />
 		</xsl:choose>
 	</xsl:template>
 

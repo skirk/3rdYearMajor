@@ -71,6 +71,7 @@
 			<xs:sequence>
 				<xs:element ref="slot" minOccurs="0" maxOccurs="unbounded"/>	
 				<xs:element ref="node" minOccurs="0" maxOccurs="unbounded"/>	
+				<xs:element name="symbol" minOccurs="0"/>	
 			</xs:sequence>
 			<xs:attribute ref="name" use="required"/>
 			<xs:attribute name="sheet" type="sheetType"/>

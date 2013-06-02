@@ -37,16 +37,17 @@ class XMLExporter
 		 * /note a duct tape solution
 		 */
 		ConstantMap *m_map;
+		//! /brief Variable to store uniforms for writing
+		HeaderStruct m_uniforms;
 
 	private:
 		
 		/* \brief Write slot attributes into XML
 		 *
 		 * \param _name name of the slot
-		 * \param _type type of the slot
 		 * \param _var variable of the slot
 		 */
-		void writeSlotAttributes(const std::string &_name, const std::string &_type, const std::string &_var);
+		void writeSlotAttributes(const std::string &_name, const std::string &_var);
 		/* \brief Write Element into XML
 		 *
 		 * \param _sourcenode name of the source
@@ -63,8 +64,17 @@ class XMLExporter
 		/* \brief Write Slots into XML
 		 *
 		 * \param _n node to write
+		 * \param _inputkey name of the input element
+		 * \param _outputkey name of the output element
 		 */
-		void writeSlots(const Node *_n);
+		void writeSlots(const Node *_n, const char *_inputkey, const char *_outputkey);
+
+		/* \brief Open new element and write node information to it as attributes
+		 *
+		 * \param _n node to write
+		 * \param _key to write
+		 */
+		void openAndWriteNode(const Node *_n, const char *_key);
 
 	public:
 		/* \brief Constructor
@@ -83,13 +93,19 @@ class XMLExporter
 		 *
 		 * \param _n node to write
 		 */
-		void write(const Node *_n);
+		void write(const Node *_n, const char *_key);
 		/* \brief Write Header into XML
 		 *
 		 * \param _h Header to write
 		 * \param _type the tag to write
 		 */
 		void writeHeader(const HeaderStruct &_header, const std::string &_type);
+		/* \brief Set uniform variable to store the 
+		 *
+		 * \param _uniforms struct to store
+		 */
+		void setUniforms(const HeaderStruct &_uniforms);
+			
 };
 
 

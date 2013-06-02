@@ -4,6 +4,8 @@
 #include "Graph.h"
 #include "Slot.h"
 #include "Context.h"
+
+#include <cstring>
 #define MY_ENCODING "ISO-8859-1"
 
 /*
@@ -24,22 +26,21 @@ void XMLExporter::open(const std::string &_filename, const std::string &_element
 	xmlDocSetRootElement(m_doc, m_node);
 	m_writer = xmlNewTextWriterTree(m_doc,m_node, 0); 
 	xmlTextWriterStartDocument(m_writer, NULL, MY_ENCODING, NULL);
-	xmlTextWriterStartElement(m_writer, BAD_CAST _element.c_str());
+//	xmlTextWriterStartElement(m_writer, BAD_CAST _element.c_str());
 	m_file = _filename;
 }
 
 void XMLExporter::close()
 {
-	xmlTextWriterEndElement(m_writer);
+	//xmlTextWriterEndElement(m_writer);
 	xmlFreeTextWriter(m_writer);
 	xmlSaveFormatFileEnc(m_file.c_str(), m_doc, MY_ENCODING, 1); 
 	xmlCleanupParser();
 	xmlMemoryDump();
 }
-void XMLExporter::writeSlotAttributes(const std::string &_name, const std::string &_type, const std::string &_var)
+void XMLExporter::writeSlotAttributes(const std::string &_name, const std::string &_var)
 {
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "name", BAD_CAST _name.c_str());
-	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "type", BAD_CAST _type.c_str());
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "var", BAD_CAST _var.c_str());
 }
 
@@ -56,65 +57,84 @@ void XMLExporter::writeSourceElement(const std::string &_sourcenode, const std::
 	xmlTextWriterEndElement(m_writer);
 }
 
-void XMLExporter::write(const Node *_n) 
+void XMLExporter::openAndWriteNode(const Node *_n, const char *_key)
 {
-
-	xmlTextWriterStartElement(m_writer, BAD_CAST "node");
+	xmlTextWriterStartElement(m_writer, BAD_CAST _key);
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "name", BAD_CAST _n->getName().c_str());
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "id", BAD_CAST _n->getID().c_str());
 	EnumParser<nodeType> p;
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "type", BAD_CAST p.lookupEnum(_n->getType()).c_str());
 
+}
+
+void XMLExporter::write(const Node *_n, const char *_key) 
+{
+	openAndWriteNode(_n, _key);
 	switch (_n->getType())
 	{
 		case nodeType::STATE:
-			writeSlots(_n);
-			break;
+			{
+				writeSlots(_n,"input","output");
+				break;
+			}
 
 		case nodeType::OPERATOR:
-			writeSlots(_n);
-			break;
+			{
+				writeSlots(_n,"input","output");
+				break;
+			}
 		case nodeType::FUNCTION:
-			writeSlots(_n);
-			break;
+			{
+				writeSlots(_n,"input","output");
+				break;
+			}
 
 		case nodeType::GRAPH:
 			{
-				writeSlots(_n);
-				const Graph *g = dynamic_cast<const Graph*>(_n);
-				if (g != NULL)
+				if(!strcmp(_key, "shader"))
 				{
+					writeSlots(_n,"import","export");
+					writeHeader(m_uniforms, "uniforms");
+				}
+				else
+				{
+					writeSlots(_n,"input","output");
+				}
+				const Graph *g = dynamic_cast<const Graph*>(_n);
+				if (g != NULL){
+
 					Graph::nodeiterator it = g->nodeBegin() ; 
-					for(; it != g->nodeEnd(); ++it)
-						write(*it);
+					for(; it != g->nodeEnd(); ++it) {
+						write(*it, "node");
+					}
 				}
 				break;
 			}
 		case nodeType::CONSTRUCTOR:
 			{
-				writeSlots(_n);
+				writeSlots(_n,"input","output");
 				break;
 			}
 		case nodeType::CONSTANT:
 			{
-				writeSlots(_n);
+				writeSlots(_n,"input","output");
 				break;
 			}
 	}
 	xmlTextWriterEndElement(m_writer);
 }
 
-void XMLExporter::writeSlots(const Node *_n)
+void XMLExporter::writeSlots(const Node *_n, const char *_inputkey, const char *_outputkey)
 {
 	int rc;
 	for(Node::iterator i = _n->begin(); i<_n->end(); i++)
 	{
 		std::cout<<"in writing node"<<'\n';
 		std::cout<<(*i)->getName()<<'\n';
-		rc = xmlTextWriterStartElement(m_writer, BAD_CAST "slot");
 		if((*i)->isInput())
 		{
-			writeSlotAttributes((*i)->getName(), "input", (*i)->getVar());
+			rc = xmlTextWriterStartElement(m_writer, BAD_CAST _inputkey);
+			writeSlotAttributes((*i)->getName(), (*i)->getVar());
 			std::cout<<(*i)->isOverwritten()<<'\n';
 
 			if ((*i)->isOverwritten())
@@ -152,10 +172,12 @@ void XMLExporter::writeSlots(const Node *_n)
 							out->getName());
 				}
 			}
+			rc = xmlTextWriterEndElement(m_writer);
 		}
 		else
 		{
-			writeSlotAttributes((*i)->getName(), "output", (*i)->getVar());
+			rc = xmlTextWriterStartElement(m_writer, BAD_CAST _outputkey);
+			writeSlotAttributes((*i)->getName(),(*i)->getVar());
 
 			if ((*i)->isOverwritten())
 			{
@@ -165,8 +187,8 @@ void XMLExporter::writeSlots(const Node *_n)
 						out->getParent()->getID(), 
 						out->getName());
 			}
+			rc = xmlTextWriterEndElement(m_writer);
 		}
-		rc = xmlTextWriterEndElement(m_writer);
 	}
 }
 
@@ -196,4 +218,7 @@ void XMLExporter::writeHeader(const HeaderStruct &_header, const std::string &_t
 
 }
 
-
+void XMLExporter::setUniforms(const HeaderStruct &_header)
+{
+	m_uniforms = _header;
+}
