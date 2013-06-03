@@ -1,0 +1,9 @@
+<node name="constfloat" sheet="multiply.xsl" type="constant">
+	<slots>
+		<slot>
+			<name>out1</name>
+			<type>output</type>
+			<var>float</var>
+		</slot>
+	</slots>
+</node>

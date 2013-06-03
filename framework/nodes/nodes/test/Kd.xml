@@ -1,0 +1,11 @@
+<node name="Kd" sheet="multiply.xsl" type="state">
+	<slots>
+		<slot>
+			<name>out1</name>
+			<type>output</type>
+			<var>vec3</var>
+		</slot>
+	</slots>
+</node>
+
+

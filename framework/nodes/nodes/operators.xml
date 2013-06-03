@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<operators>
+	<node name="mul" sheet="multiply.xsl" type="operator" id="0">
+		<slot name='in1' type='input' var='mat4'/>
+		<slot name='in2' type='input' var='mat4'/>
+		<slot name='out1' type='output' var='mat4'/>
+		<symbol>*</symbol>
+	</node>
+	<node name="plus" sheet="multiply.xsl" type="operator" id="0">
+		<slot name='in1' type='input' var='mat4'/>
+		<slot name='in2' type='input' var='mat4'/>
+		<slot name='out1' type='output' var='mat4'/>
+		<symbol>+</symbol>
+	</node>
+</operators>

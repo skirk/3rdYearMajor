@@ -1,0 +1,20 @@
+<node name="Vec4Constructor" sheet="multiply.xsl" type="constructor">
+	<slots>
+		<slot>
+			<name>in1</name>
+			<type>input</type>
+			<var>vec3</var>
+		</slot>
+		<slot>
+			<name>in2</name>
+			<type>input</type>
+			<var>float</var>
+		</slot>
+		<slot>
+			<name>out1</name>
+			<type>output</type>
+			<var>vec4</var>
+		</slot>
+	</slots>
+</node>
+

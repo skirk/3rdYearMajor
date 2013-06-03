@@ -1,0 +1,5 @@
+<node name="ModelView" sheet="multiply.xsl" type="state" id="0">
+	<slot name='out1' type='output' var='mat4'/>
+</node>
+
+

@@ -1,0 +1,11 @@
+<node name="ProjectionMatrix" sheet="multiply.xsl" type="state">
+	<slots>
+		<slot>
+			<name>out1</name>
+			<type>output</type>
+			<var>mat4</var>
+		</slot>
+	</slots>
+</node>
+
+
