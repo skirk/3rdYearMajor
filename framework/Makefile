@@ -6,13 +6,13 @@ OPTS=-c -g -Wall -std=c++0x -D_GLIBCXX_DEBUG
 SRCDIR = src
 OBJDIR = obj
 INCDIR = -Iinclude \
-	 -I/usr/include/python2.6/ \
+	 $(shell pkg-config --cflags python3) \
          -I/usr/local/include \
 
-LDFLAGS= `xml2-config --libs` \
-	 `xslt-config --libs` \
-	 -lpython2.6 -lm -L/usr/lib/python2.6/config \
-	 -lboost_python \
+LDFLAGS= $(shell xml2-config --libs) \
+	 $(shell xslt-config --libs) \
+	 $(shell pkg-config --libs python3) \
+	 -lboost_python3 \
 	 -lboost_system \
 
 INCLUDEPATH= `xml2-config --cflags` \

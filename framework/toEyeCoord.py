@@ -1,6 +1,5 @@
 import Framework as fw
-from nodetype import *
-from slotvariable import *
+from Framework import *
 
 c = fw.Context()
 
@@ -18,15 +17,15 @@ c.addOutputSlot('eyenormal', VEC4)
 c.addNode('ModelView')
 c.addNode('NormalMatrix')
 c.addNode('MultiplyMat4Vec4')
-c.addNode('Multiply')
+c.addNode('MultiplyMat4Vec4')
 
 c.connectSlots('ModelView.0.out1', 'MultiplyMat4Vec4.0.in2')
 c.connectSlots('NormalMatrix.0.out1', 'Multiply.0.in2')
 c.connectSlots('position', 'MultiplyMat4Vec4.0.in1')
-c.connectSlots('normal', 'Multiply.0.in1')
+c.connectSlots('normal', 'MultiplyMat4Vec4.1.in1')
 
 c.connectSlots('eyepos', 'MultiplyMat4Vec4.0.out1')
-c.connectSlots('eyenormal', 'Multiply.0.out1')
+c.connectSlots('eyenormal', 'MultiplyMat4Vec4.1.out1')
 c.listCurrent()
 
 c.writeNode("temporary/node.xml")

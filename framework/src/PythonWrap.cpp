@@ -5,8 +5,10 @@
 #include "Exporter.h"
 #include "NodeFactory.h"
 #include "XSLTprocessor.h"
+#include <Python.h>
 #include <memory>
 #include <boost/python.hpp>
+#include <boost/python/enum.hpp> 
 
 
 std::ostream &operator<<(std::ostream &os, const Node &_n)
@@ -45,6 +47,23 @@ BOOST_PYTHON_MODULE(nodetype)
 {
 	using namespace boost::python;
 
+}
+
+BOOST_PYTHON_MODULE(slotvariable)
+{
+	using namespace boost::python;
+
+}
+
+DataBase *pointer (DataBase& p)
+{
+	return &p;
+}
+/*
+BOOST_PYTHON_MODULE(nodetype)
+{
+	using namespace boost::python;
+
 	enum_<nodeType>("NodeType")
 		.value("GRAPH", nodeType::GRAPH)
 		.value("OPERATOR", nodeType::OPERATOR)
@@ -69,15 +88,27 @@ BOOST_PYTHON_MODULE(slotvariable)
 		.export_values()
 		;
 }
-DataBase *pointer (DataBase& p)
-{
-	return &p;
-}
-
+*/
 BOOST_PYTHON_MODULE(Framework)
 {
 	using namespace boost::python;
-
+	enum_<nodeType>("NodeType")
+		.value("GRAPH", nodeType::GRAPH)
+		.value("OPERATOR", nodeType::OPERATOR)
+		.value("FUNCTION", nodeType::FUNCTION)
+		.value("STATE", nodeType::STATE)
+		.export_values()
+		;
+	enum_<SVariable>("SlotVariable")
+		.value("BOOLEAN", SVariable::BOOLEAN)
+		.value("INT", SVariable::INT)
+		.value("FLOAT", SVariable::FLOAT)
+		.value("VEC3", SVariable::VEC3)
+		.value("VEC4", SVariable::VEC4)
+		.value("MAT3", SVariable::MAT3)
+		.value("MAT4", SVariable::MAT4)
+		.export_values()
+		;
 	class_<DataBase>("DataBase")
 		//.def("__iter__", range(&Container<Node>::begin, &Container<Node>::end));
 		.def("__iter__", iterator<DataBase>())
@@ -119,7 +150,5 @@ BOOST_PYTHON_MODULE(Framework)
 	to_python_converter<Node *, convert_node_ptr>();
 	to_python_converter<Slot *, convert_slot_ptr>();
 
-	initnodetype();
-	initslotvariable();
 }
 
