@@ -5,10 +5,8 @@
 #include "Exporter.h"
 #include "NodeFactory.h"
 #include "XSLTprocessor.h"
-#include <Python.h>
 #include <memory>
 #include <boost/python.hpp>
-#include <boost/python/enum.hpp> 
 
 
 std::ostream &operator<<(std::ostream &os, const Node &_n)

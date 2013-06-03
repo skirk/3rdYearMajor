@@ -1,9 +1,7 @@
 import Framework as fw
-from nodetype import *
-from slotvariable import *
 
 c = fw.Context()
-
+'''
 c.printDB()
 
 c.addInputSlot('vert_position', VEC4)
@@ -20,3 +18,4 @@ c.writeShader('temporary/test.xml')
 p = fw.processor();
 p.process("test.xsl", "temporary/test.xml", "shaders/vertex.glsl");
 c.listCurrent();
+'''
