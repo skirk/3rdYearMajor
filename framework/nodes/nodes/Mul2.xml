@@ -1,5 +1,0 @@
-<node name="Multiply" sheet="multiply.xsl" type="operator" id="0">
-	<slot name ="in1" type="input" var="vec4"/>
-	<slot name ="in2" type="input" var="mat4"/>
-	<slot name ="out1" type="output" var="vec4"/>
-</node>

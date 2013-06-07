@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<functions>
+	<node name="NormalizeVec3" type="function" id="0">
+		<input name='in1' var='vec3'/>
+		<output name='out1' var='vec3'/>
+		<operation>normalize</operation>
+	</node>
+	<node name="ClampVec4" type="function" id="0">
+		<input name='in1' var='vec4'/>
+		<input name='minVal' var='vec4'/>
+		<input name='maxVal' var='vec4'/>
+		<output name='out1' var='vec4'/>
+		<operation>clamp</operation>
+	</node>
+	<node name="ClampVec3" type="function" id="0">
+		<input name='in1' var='vec3'/>
+		<input name='minVal' var='float'/>
+		<input name='maxVal' var='float'/>
+		<output name='out1' var='vec3'/>
+		<operation>clamp</operation>
+	</node>
+
+	<node name="DotVec3" type="function" id="0">
+		<input name='in1' var='vec3'/>
+		<input name='in2' var='vec3'/>
+		<output name='out1' var='float'/>
+		<operation>dot</operation>
+	</node>
+	<node name="MaxFloat" type="function" id="0">
+		<input name='in1' var='float'/>
+		<input name='in2' var='float'/>
+		<output name='out1' var='float'/>
+		<operation>max</operation>
+	</node>
+	<node name="PowFloat" type="function" id="0">
+		<input name='in1' var='float'/>
+		<input name='in2' var='float'/>
+		<output name='out1' var='float'/>
+		<operation>pow</operation>
+	</node>
+	<node name="ReflectVec3" type="function" id="0">
+		<input name='in1' var='vec3'/>
+		<input name='in2' var='vec3'/>
+		<output name='out1' var='vec3'/>
+		<operation>reflect</operation>
+	</node>
+</functions>
+

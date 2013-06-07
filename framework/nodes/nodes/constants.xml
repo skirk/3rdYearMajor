@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<constants>
+	<node name="FloatConst" type="constant" id="0">
+		<output name="out1" var="float"/>
+		<value>0.0</value>
+	</node>
+	<node name="FloatConst1" type="constant" id="0">
+		<output name="out1" var="float"/>
+		<value>1.0</value>
+	</node>
+
+</constants>

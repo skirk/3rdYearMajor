@@ -1,15 +1,70 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <operators>
-	<node name="mul" sheet="multiply.xsl" type="operator" id="0">
-		<slot name='in1' type='input' var='mat4'/>
-		<slot name='in2' type='input' var='mat4'/>
-		<slot name='out1' type='output' var='mat4'/>
+	<node name="MultiplyMat4Mat4" type="operator" id="0">
+		<input name='in1' var='mat4'/>
+		<input name='in2' var='mat4'/>
+		<output name='out1' var='mat4'/>
 		<symbol>*</symbol>
 	</node>
-	<node name="plus" sheet="multiply.xsl" type="operator" id="0">
-		<slot name='in1' type='input' var='mat4'/>
-		<slot name='in2' type='input' var='mat4'/>
-		<slot name='out1' type='output' var='mat4'/>
+	<node name="MultiplyMat4Vec4" type="operator" id="0">
+		<input name='in1' var='mat4'/>
+		<input name='in2' var='vec4'/>
+		<output name='out1' var='vec4'/>
+		<symbol>*</symbol>
+	</node>
+	<node name="MultiplyMat3Vec3" type="operator" id="0">
+		<input name='in1' var='mat3'/>
+		<input name='in2' var='vec3'/>
+		<output name='out1' var='vec3'/>
+		<symbol>*</symbol>
+	</node>
+	<node name="MultiplyVec3Vec3" type="operator" id="0">
+		<input name='in1' var='vec3'/>
+		<input name='in2' var='vec3'/>
+		<output name='out1' var='vec3'/>
+		<symbol>*</symbol>
+	</node>
+	<node name="MultiplyVec3Float" type="operator" id="0">
+		<input name='in1' var='vec3'/>
+		<input name='in2' var='float'/>
+		<output name='out1' var='vec3'/>
+		<symbol>*</symbol>
+	</node>
+
+	<node name="PlusMat4Mat4" type="operator" id="0">
+		<input name='in1' var='mat4'/>
+		<input name='in2' var='mat4'/>
+		<output name='out1' var='mat4'/>
 		<symbol>+</symbol>
+	</node>
+	<node name="PlusVec3Vec3" type="operator" id="0">
+		<input name='in1' var='vec3'/>
+		<input name='in2' var='vec3'/>
+		<output name='out1' var='vec3'/>
+		<symbol>+</symbol>
+	</node>
+
+	<node name="MinusMat4Mat4" type="operator" id="0">
+		<input name='in1' var='mat4'/>
+		<input name='in2' var='mat4'/>
+		<output name='out1' var='mat4'/>
+		<symbol>-</symbol>
+	</node>
+	<node name="MinusVec3Vec3" type="operator" id="0">
+		<input name='in1' var='vec3'/>
+		<input name='in2' var='vec3'/>
+		<output name='out1' var='vec3'/>
+		<symbol>-</symbol>
+	</node>
+	<node name="MinusVec4Vec4" type="operator" id="0">
+		<input name='in1' var='vec4'/>
+		<input name='in2' var='vec4'/>
+		<output name='out1' var='vec4'/>
+		<symbol>-</symbol>
+	</node>
+	<node name="NegateVec3" type="operator" order="prefix" id="0">
+		<input name="in1" var="vec3"/>
+		<output name="out1" var="vec3"/>
+		<symbol>-</symbol>
 	</node>
 </operators>

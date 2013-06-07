@@ -50,10 +50,12 @@ void XMLExporter::writeSourceElement(const std::string &_sourcenode, const std::
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "node", BAD_CAST _sourcenode.c_str());
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "id", BAD_CAST _id.c_str());
 	xmlTextWriterWriteAttribute(m_writer, BAD_CAST "slot", BAD_CAST _sourceslot.c_str());
+	/*
 	if (_value != "")
 	{
 		xmlTextWriterWriteAttribute(m_writer, BAD_CAST "value", BAD_CAST _value.c_str());
 	}
+	*/
 	xmlTextWriterEndElement(m_writer);
 }
 
@@ -120,6 +122,11 @@ void XMLExporter::write(const Node *_n, const char *_key)
 				writeSlots(_n,"input","output");
 				break;
 			}
+		case nodeType::BRANCH:
+			{
+				writeSlots(_n,"input","output");
+				break;
+			}
 	}
 	xmlTextWriterEndElement(m_writer);
 }
@@ -140,6 +147,7 @@ void XMLExporter::writeSlots(const Node *_n, const char *_inputkey, const char *
 			if ((*i)->isOverwritten())
 			{
 				Slot *out = (*i)->getLink();
+				/*
 				if(out->getParent()->getType() == nodeType::CONSTANT)
 				{
 					std::cout<<"writing constant node"<<'\n';
@@ -164,13 +172,11 @@ void XMLExporter::writeSlots(const Node *_n, const char *_inputkey, const char *
 								it->second.c_str());
 					}
 				}
-				else 
-				{
-					writeSourceElement(
-							out->getParent()->getName(),
-							out->getParent()->getID(),
-							out->getName());
-				}
+				*/
+				writeSourceElement(
+						out->getParent()->getName(),
+						out->getParent()->getID(),
+						out->getName());
 			}
 			rc = xmlTextWriterEndElement(m_writer);
 		}

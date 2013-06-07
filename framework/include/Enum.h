@@ -17,7 +17,8 @@ enum class nodeType {
 	FUNCTION,
 	STATE,
 	CONSTRUCTOR,
-	CONSTANT
+	CONSTANT,
+	BRANCH
 };
 
 

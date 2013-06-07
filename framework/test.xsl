@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 
+The core implementation of this stylesheet is made by Ralf Borau
+I've took some shortcuts and modified some files names and modified 
+few bits here and there but Ralf's work still consist the major part of
+the work 
+-->
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="text" indent="no" />
@@ -71,7 +77,21 @@
 			<xsl:with-param name="functionCallID" select="$functionCallID" />
 		</xsl:apply-templates>
 	</xsl:template>
-
+	<xsl:template match="node[@type='constructor']" mode="call">
+		<xsl:apply-templates select="following-sibling::node[position()=1]" mode="call" />
+		<xsl:variable name="functionCallID">
+			<xsl:value-of select="concat( generate-id(), @id )" />
+		</xsl:variable>
+		<xsl:variable name="result">
+			<xsl:value-of select="output/@var" />
+		</xsl:variable>
+		<xsl:value-of select="concat( $result, ' ')" />
+		<xsl:apply-templates select="." mode="getOutput" />
+		<xsl:value-of select="string(';&#xA;')" />
+		<xsl:apply-templates select="." mode="functionCall">
+			<xsl:with-param name="functionCallID" select="$functionCallID" />
+		</xsl:apply-templates>
+	</xsl:template>
 	<xsl:template match="node[@type='function']" mode="call">
 		<xsl:apply-templates select="following-sibling::node[position()=1]" mode="call" />
 		<xsl:variable name="functionCallID">
@@ -89,7 +109,9 @@
 		<xsl:apply-templates select="following-sibling::node[position()=1]" mode="call" />
 	</xsl:template>
 
-
+	<xsl:template match="node[@type='constant']" mode="call">
+		<xsl:apply-templates select="following-sibling::node[position()=1]" mode="call" />
+	</xsl:template>
 	<!-- create a function call for diagram nodes -->
 	<xsl:template match="node[@type='graph']" mode="call">
 		<xsl:apply-templates select="following-sibling::node[position()=1]" mode="call" />
@@ -109,11 +131,24 @@
 	<xsl:template match="node[@type='operator']" mode="functionCall">
 		<xsl:apply-templates select="." mode="getOutput" />
 		<xsl:value-of select="string(' = ')" />
-		<xsl:apply-templates select="input[position()=1]/source" mode="getOutput" />
-		<xsl:apply-templates select="input[position()=1]/import" mode="getOutput" />
-		<xsl:value-of select="document('./nodes/nodes/operators.xml')/operators/node[@name=@name]/symbol" />
-		<xsl:apply-templates select="input[position()=2]/source" mode="getOutput" />
-		<xsl:apply-templates select="input[position()=2]/import" mode="getOutput" />
+		<xsl:variable name="name">
+			<xsl:value-of select="@name"/>
+		</xsl:variable>
+		<xsl:choose>
+			<xsl:when test="not(document('./nodes/nodes/operators.xml')/operators/node[@type='operator'][@name=$name][@order='prefix'])">
+				<xsl:apply-templates select="input[position()=1]/source" mode="getOutput" />
+				<xsl:apply-templates select="input[position()=1]/import" mode="getOutput" />
+				<xsl:apply-templates select="document('./nodes/nodes/operators.xml')/operators/node[@type='operator'][@name=$name]" mode="getSymbol"/>
+				<xsl:apply-templates select="input[position()=2]/source" mode="getOutput" />
+				<xsl:apply-templates select="input[position()=2]/import" mode="getOutput" />
+			</xsl:when>
+			<xsl:otherwise>
+
+				<xsl:apply-templates select="document('./nodes/nodes/operators.xml')/operators/node[@type='operator'][@name=$name]" mode="getSymbol"/>
+				<xsl:apply-templates select="input[position()=1]/source" mode="getOutput" />
+				<xsl:apply-templates select="input[position()=1]/import" mode="getOutput" />
+			</xsl:otherwise>
+		</xsl:choose>
 		<xsl:value-of select="string(';&#xA;')" />
 	</xsl:template>
 
@@ -126,6 +161,29 @@
 			<xsl:with-param name="functionCallID" select="$functionCallID" />
 		</xsl:apply-templates>
 		<xsl:apply-templates select="input" mode="functionCall" />
+		<xsl:value-of select="string(');&#xA;')" />
+	</xsl:template>
+
+	<xsl:template match="node[@type='constructor']" mode="functionCall">
+		<xsl:param name="functionCallID" />
+		<xsl:apply-templates select="." mode="getOutput" />
+		<xsl:value-of select="string(' = ')" />
+		<xsl:variable name="name" select="@name" />
+
+		<xsl:apply-templates select="document('./nodes/nodes/constructors.xml')/constructors/node[@type='constructor'][@name=$name]" mode="getOperator" />
+		<xsl:value-of select="string('(')" />
+		<xsl:apply-templates select="input" mode="functionCall2"/>
+		<xsl:value-of select="string(');&#xA;')" />
+	</xsl:template>
+
+	<xsl:template match="node[@type='function']" mode="functionCall">
+		<xsl:param name="functionCallID" />
+		<xsl:apply-templates select="." mode="getOutput" />
+		<xsl:variable name="name" select="@name" />
+		<xsl:value-of select="string(' = ')" />
+		<xsl:apply-templates select="document('nodes/nodes/functions.xml')/functions/node[@type='function'][@name=$name]" mode="getOperator"/>
+		<xsl:value-of select="string('(')" />
+		<xsl:apply-templates select="input" mode="functionCall2"/>
 		<xsl:value-of select="string(');&#xA;')" />
 	</xsl:template>
 
@@ -147,7 +205,14 @@
 		<xsl:apply-templates select="source" mode="getOutput" />
 	</xsl:template>
 
-	<!-- ====================== GET OUTPUTS AND VALUES ===================== -->
+	<xsl:template match="input" mode="functionCall2">
+		<xsl:if test="position()!=1">
+			<xsl:value-of select="string(',')" />
+		</xsl:if>
+		<xsl:apply-templates select="source" mode="getOutput" />
+	</xsl:template>
+
+<!-- ====================== GET OUTPUTS AND VALUES ===================== -->
 	<xsl:template match="source" mode="getOutput">
 		<xsl:variable name="node" select="@node" />		
 		<xsl:variable name="id" select="@id" />		
@@ -195,7 +260,7 @@
 	</xsl:template>
 	<!-- get value from a  input slot -->
 	<xsl:template match="input" mode="getValue">
-		<xsl:value-of select="@name" />
+		<xsl:value-of select="@name"/>
 	</xsl:template>
 
 	<!-- get output from a slot -->
@@ -213,10 +278,31 @@
 	<xsl:template match="node[@type='state']" mode="getOutput">
 		<xsl:value-of select="@name" />
 	</xsl:template>
+	<xsl:template match="node[@type='operator']" mode="getSymbol">
+		<xsl:value-of select="symbol" />
+	</xsl:template>
+	<xsl:template match="node[@type='constant']" mode="getValue">
+		<xsl:value-of select="value" />
+	</xsl:template>
+	<xsl:template match="node[@type='function']" mode="getOperator">
+		<xsl:value-of select="operation" />
+	</xsl:template>
 
+	<xsl:template match="node[@type='constructor']" mode="getOperator">
+		<xsl:value-of select="operation" />
+	</xsl:template>
 	<!-- get output from constant node -->
 	<xsl:template match="node[@type='constant']" mode="getOutput">
-		<xsl:value-of select="string('getting constant value')" />
+		<xsl:variable name="name" select="@name"/>
+		<xsl:apply-templates select="document('./nodes/nodes/constants.xml')/constants/node[@type='constant'][@name=$name]" mode="getValue"/>
+	</xsl:template>
+
+	<!-- get output from constructor node -->
+	<xsl:template match="node[@type='constructor']" mode="getOutput">
+		<xsl:variable name="functionCallID">
+			<xsl:value-of select="concat(generate-id(), @id )" />
+		</xsl:variable>
+		<xsl:value-of select="concat('comb', $functionCallID)" />
 	</xsl:template>
 
 	<!-- get output from a operator node -->

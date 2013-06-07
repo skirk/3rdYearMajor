@@ -1,8 +1,8 @@
 import Framework as fw
 
 c = fw.Context()
-'''
 c.printDB()
+'''
 
 c.addInputSlot('vert_position', VEC4)
 c.addInputSlot('vert_normal', VEC4)

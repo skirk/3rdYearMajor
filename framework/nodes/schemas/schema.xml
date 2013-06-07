@@ -32,13 +32,6 @@
 			<xs:enumeration value="output"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<!-- type of the sheet -->
-	<xs:simpleType name="sheetType">
-		<xs:restriction base="xs:string">
-			<xs:pattern value=".*\.xsl"/>
-		</xs:restriction>
-	</xs:simpleType>
-
 	<xs:simpleType name="idType">
 		<xs:restriction base="xs:int">
 			<xs:minInclusive value="0"/>
@@ -56,25 +49,20 @@
 			<xs:element ref="source" minOccurs="0" maxOccurs="unbounded"/>	
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string"/>
-		<xs:attribute name="type" type="InputOrOutput"/>
 		<xs:attribute name="var" type="slotVar"/>
 	</xs:complexType>
-	<xs:complexType name="SlotContainer">
-		<xs:sequence>
-			<xs:element ref="slot" minOccurs="1" maxOccurs="unbounded"/>
-		</xs:sequence>
-	</xs:complexType>
-	
 	<xs:element name="node">
 
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="slot" minOccurs="0" maxOccurs="unbounded"/>	
+				<xs:element name="input" type="slotType" minOccurs="0" maxOccurs="unbounded"/>	
+				<xs:element name="output" type="slotType"  minOccurs="0" maxOccurs="unbounded"/>	
 				<xs:element ref="node" minOccurs="0" maxOccurs="unbounded"/>	
 				<xs:element name="symbol" minOccurs="0"/>	
+				<xs:element name="operation" minOccurs="0"/>	
+				<xs:element name="value" minOccurs="0"/>	
 			</xs:sequence>
 			<xs:attribute ref="name" use="required"/>
-			<xs:attribute name="sheet" type="sheetType"/>
 			<xs:attribute name="id" type="idType" use="required"/>
 			<xs:attribute name="type" type="nodeType" use="required"/>
 		</xs:complexType>
@@ -93,4 +81,34 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="states">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="node" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="functions">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="node" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="constructors">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="node" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="constants">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="node" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+
 </xs:schema>

@@ -14,6 +14,10 @@ const char* NodeFactory::NAME="name";
 const char* NodeFactory::NODE="node";
 const char* NodeFactory::ROOT="root";
 const char* NodeFactory::OPERATORS = "operators";
+const char* NodeFactory::STATES = "states";
+const char* NodeFactory::FUNCTIONS = "functions";
+const char* NodeFactory::CONSTRUCTORS = "constructors";
+const char* NodeFactory::CONSTANTS = "constants";
 
 NodeFactory* NodeFactory::m_instance = NULL;
 
@@ -91,7 +95,13 @@ void NodeFactory::InitDB()
 			cur = xmlDocGetRootElement(docvec[i]);
 			while(cur != NULL)
 			{
-				if(!xmlStrcmp(cur->name, (const xmlChar *)ROOT) || !xmlStrcmp(cur->name, (const xmlChar *)OPERATORS))
+				if(
+				!xmlStrcmp(cur->name, (const xmlChar *)ROOT) || 
+				!xmlStrcmp(cur->name, (const xmlChar *)OPERATORS) ||
+				!xmlStrcmp(cur->name, (const xmlChar *)STATES) ||
+				!xmlStrcmp(cur->name, (const xmlChar *)CONSTRUCTORS) ||
+				!xmlStrcmp(cur->name, (const xmlChar *)CONSTANTS) ||
+				!xmlStrcmp(cur->name, (const xmlChar *)FUNCTIONS))
 				{
 					cur2 = cur->children;
 					while(cur2 != NULL)

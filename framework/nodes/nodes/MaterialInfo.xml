@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root>
+  <node name="MaterialInfo" id="0" type="graph">
+    <output name="MaterialKA_out" var="vec3">
+      <source node="MaterialKA" id="0" slot="out1"/>
+    </output>
+    <output name="MaterialKD_out" var="vec3">
+      <source node="MaterialKD" id="0" slot="out1"/>
+    </output>
+    <output name="MaterialKS_out" var="vec3">
+      <source node="MaterialKS" id="0" slot="out1"/>
+    </output>
+    <output name="MaterialShine_out" var="float">
+      <source node="MaterialShininess" id="0" slot="out1"/>
+    </output>
+    <node name="MaterialKA" id="0" type="state">
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="MaterialKD" id="0" type="state">
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="MaterialKS" id="0" type="state">
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="MaterialShininess" id="0" type="state">
+      <output name="out1" var="float"/>
+    </node>
+  </node>
+</root>

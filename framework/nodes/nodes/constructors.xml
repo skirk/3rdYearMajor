@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<constructors>
+	<node name="Vec3constr" type="constructor" id="0">
+		<input name="in1" var="vec4"/>
+		<output name="out1" var="vec3"/>
+		<operation>vec3</operation>
+	</node>
+	<node name="Vec3fromFloat" type="constructor" id="0">
+		<input name="in1" var="float"/>
+		<output name="out1" var="vec3"/>
+		<operation>vec3</operation>
+	</node>
+
+</constructors>

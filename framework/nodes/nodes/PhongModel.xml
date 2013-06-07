@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root>
+  <node name="phongModelNode" id="0" type="graph">
+    <input name="In_Light_Pos" var="vec4"/>
+    <input name="In_Vert_Pos" var="vec4"/>
+    <input name="In_Vert_Norm" var="vec3"/>
+    <input name="In_Light_LA" var="vec3"/>
+    <input name="In_Light_LD" var="vec3"/>
+    <input name="In_Light_LS" var="vec3"/>
+    <input name="In_Material_KA" var="vec3"/>
+    <input name="In_Material_KD" var="vec3"/>
+    <input name="In_Material_KS" var="vec3"/>
+    <input name="In_Material_Shininess" var="float"/>
+    <output name="Out_PhongColor" var="vec3">
+      <source node="PlusVec3Vec3" id="1" slot="out1"/>
+    </output>
+    <node name="NormalizeVec3" id="0" type="function">
+      <input name="in1" var="vec3">
+        <source node="Vec3constr" id="0" slot="out1"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="MinusVec4Vec4" id="0" type="operator">
+      <input name="in1" var="vec4">
+        <source node="phongModelNode" id="0" slot="In_Light_Pos"/>
+      </input>
+      <input name="in2" var="vec4">
+        <source node="phongModelNode" id="0" slot="In_Vert_Pos"/>
+      </input>
+      <output name="out1" var="vec4"/>
+    </node>
+    <node name="Vec3constr" id="0" type="constructor">
+      <input name="in1" var="vec4">
+        <source node="MinusVec4Vec4" id="0" slot="out1"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="ReflectVec3" id="0" type="function">
+      <input name="in1" var="vec3">
+        <source node="NegateVec3" id="1" slot="out1"/>
+      </input>
+      <input name="in2" var="vec3">
+        <source node="phongModelNode" id="0" slot="In_Vert_Norm"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="NegateVec3" id="0" type="operator">
+      <input name="in1" var="vec3">
+        <source node="Vec3constr" id="1" slot="out1"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="Vec3constr" id="1" type="constructor">
+      <input name="in1" var="vec4">
+        <source node="phongModelNode" id="0" slot="In_Vert_Pos"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="NormalizeVec3" id="1" type="function">
+      <input name="in1" var="vec3">
+        <source node="NegateVec3" id="0" slot="out1"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="NegateVec3" id="1" type="operator">
+      <input name="in1" var="vec3">
+        <source node="NormalizeVec3" id="0" slot="out1"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="MultiplyVec3Vec3" id="0" type="operator">
+      <input name="in1" var="vec3">
+        <source node="phongModelNode" id="0" slot="In_Light_LA"/>
+      </input>
+      <input name="in2" var="vec3">
+        <source node="phongModelNode" id="0" slot="In_Material_KD"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="DotVec3" id="0" type="function">
+      <input name="in1" var="vec3">
+        <source node="NormalizeVec3" id="0" slot="out1"/>
+      </input>
+      <input name="in2" var="vec3">
+        <source node="phongModelNode" id="0" slot="In_Vert_Norm"/>
+      </input>
+      <output name="out1" var="float"/>
+    </node>
+    <node name="MaxFloat" id="0" type="function">
+      <input name="in1" var="float">
+        <source node="DotVec3" id="0" slot="out1"/>
+      </input>
+      <input name="in2" var="float">
+        <source node="FloatConst" id="0" slot="out1"/>
+      </input>
+      <output name="out1" var="float"/>
+    </node>
+    <node name="FloatConst" id="0" type="constant">
+      <output name="out1" var="float"/>
+    </node>
+    <node name="MultiplyVec3Vec3" id="1" type="operator">
+      <input name="in1" var="vec3">
+        <source node="phongModelNode" id="0" slot="In_Light_LD"/>
+      </input>
+      <input name="in2" var="vec3">
+        <source node="phongModelNode" id="0" slot="In_Material_KD"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="MultiplyVec3Float" id="0" type="operator">
+      <input name="in1" var="vec3">
+        <source node="MultiplyVec3Vec3" id="1" slot="out1"/>
+      </input>
+      <input name="in2" var="float">
+        <source node="MaxFloat" id="0" slot="out1"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="FloatConst" id="1" type="constant">
+      <output name="out1" var="float"/>
+    </node>
+    <node name="Vec3fromFloat" id="0" type="constructor">
+      <input name="in1" var="float">
+        <source node="FloatConst" id="1" slot="out1"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="DotVec3" id="1" type="function">
+      <input name="in1" var="vec3">
+        <source node="ReflectVec3" id="0" slot="out1"/>
+      </input>
+      <input name="in2" var="vec3">
+        <source node="NormalizeVec3" id="1" slot="out1"/>
+      </input>
+      <output name="out1" var="float"/>
+    </node>
+    <node name="FloatConst" id="2" type="constant">
+      <output name="out1" var="float"/>
+    </node>
+    <node name="MaxFloat" id="1" type="function">
+      <input name="in1" var="float">
+        <source node="DotVec3" id="1" slot="out1"/>
+      </input>
+      <input name="in2" var="float">
+        <source node="FloatConst" id="2" slot="out1"/>
+      </input>
+      <output name="out1" var="float"/>
+    </node>
+    <node name="PowFloat" id="0" type="function">
+      <input name="in1" var="float">
+        <source node="MaxFloat" id="1" slot="out1"/>
+      </input>
+      <input name="in2" var="float">
+        <source node="phongModelNode" id="0" slot="In_Material_Shininess"/>
+      </input>
+      <output name="out1" var="float"/>
+    </node>
+    <node name="MultiplyVec3Vec3" id="2" type="operator">
+      <input name="in1" var="vec3">
+        <source node="phongModelNode" id="0" slot="In_Light_LS"/>
+      </input>
+      <input name="in2" var="vec3">
+        <source node="phongModelNode" id="0" slot="In_Material_KS"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="MultiplyVec3Float" id="1" type="operator">
+      <input name="in1" var="vec3">
+        <source node="MultiplyVec3Vec3" id="2" slot="out1"/>
+      </input>
+      <input name="in2" var="float">
+        <source node="PowFloat" id="0" slot="out1"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="FloatConst" id="3" type="constant">
+      <output name="out1" var="float"/>
+    </node>
+    <node name="FloatConst1" id="0" type="constant">
+      <output name="out1" var="float"/>
+    </node>
+    <node name="ClampVec3" id="0" type="function">
+      <input name="in1" var="vec3">
+        <source node="MultiplyVec3Float" id="1" slot="out1"/>
+      </input>
+      <input name="minVal" var="float">
+        <source node="FloatConst" id="3" slot="out1"/>
+      </input>
+      <input name="maxVal" var="float">
+        <source node="FloatConst1" id="0" slot="out1"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="PlusVec3Vec3" id="0" type="operator">
+      <input name="in1" var="vec3">
+        <source node="MultiplyVec3Vec3" id="0" slot="out1"/>
+      </input>
+      <input name="in2" var="vec3">
+        <source node="MultiplyVec3Float" id="0" slot="out1"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="PlusVec3Vec3" id="1" type="operator">
+      <input name="in1" var="vec3">
+        <source node="PlusVec3Vec3" id="0" slot="out1"/>
+      </input>
+      <input name="in2" var="vec3">
+        <source node="ClampVec3" id="0" slot="out1"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+  </node>
+</root>

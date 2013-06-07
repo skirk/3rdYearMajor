@@ -9,26 +9,26 @@ c.listCurrent()
 
 c.addNode("toEyeCoord")
 c.goDownALevel("toEyeCoord.0")
-c.addInputSlot('position', VEC4)
-c.addInputSlot('normal', VEC4)
-c.addOutputSlot('eyepos', VEC4)
-c.addOutputSlot('eyenormal', VEC4)
+c.addInputSlot('Vertex_Pos', VEC4)
+c.addInputSlot('Vertex_Norm', VEC3)
+c.addOutputSlot('Eye_Pos', VEC4)
+c.addOutputSlot('Eye_Norm', VEC3)
 
-c.addNode('ModelView')
+c.addNode('ModelViewMatrix')
 c.addNode('NormalMatrix')
 c.addNode('MultiplyMat4Vec4')
-c.addNode('MultiplyMat4Vec4')
+c.addNode('MultiplyMat3Vec3')
 
-c.connectSlots('ModelView.0.out1', 'MultiplyMat4Vec4.0.in2')
-c.connectSlots('NormalMatrix.0.out1', 'Multiply.0.in2')
-c.connectSlots('position', 'MultiplyMat4Vec4.0.in1')
-c.connectSlots('normal', 'MultiplyMat4Vec4.1.in1')
+c.connectSlots('ModelViewMatrix.0.out1', 'MultiplyMat4Vec4.0.in1')
+c.connectSlots('NormalMatrix.0.out1', 'MultiplyMat3Vec3.0.in1')
+c.connectSlots('Vertex_Pos', 'MultiplyMat4Vec4.0.in2')
+c.connectSlots('Vertex_Norm', 'MultiplyMat3Vec3.0.in2')
 
-c.connectSlots('eyepos', 'MultiplyMat4Vec4.0.out1')
-c.connectSlots('eyenormal', 'MultiplyMat4Vec4.1.out1')
+c.connectSlots('Eye_Pos', 'MultiplyMat4Vec4.0.out1')
+c.connectSlots('Eye_Norm', 'MultiplyMat3Vec3.0.out1')
 c.listCurrent()
 
-c.writeNode("temporary/node.xml")
+c.writeNode("temporary/toEyeCoord.xml")
 
 #Vertex shader
 #c.addInputSlot("VertexPosition", VEC3);

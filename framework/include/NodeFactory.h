@@ -25,6 +25,10 @@ class NodeFactory
 		static const char* NODE;
 		static const char* ROOT;
 		static const char* OPERATORS;
+		static const char* STATES;
+		static const char* FUNCTIONS;
+		static const char* CONSTRUCTORS;
+		static const char* CONSTANTS;
 
 	public:
 		

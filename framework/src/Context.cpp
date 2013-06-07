@@ -109,9 +109,12 @@ void Context::checkForStates(Graph *_g)
 	{
 		if((*it)->getType()== nodeType::STATE)
 		{
-			m_uniforminputs.push_back(*(*it)->begin());
+			for(Graph::iterator sit =(*it)->begin(); sit != (*it)->end(); sit++)
+			{
+				m_uniforminputs.push_back(*sit);
+			}
 		}
-		if((*it)->getType()== nodeType::GRAPH)
+		else if((*it)->getType()== nodeType::GRAPH)
 		{
 
 			Graph *temp = dynamic_cast<Graph*>(*it);
@@ -146,9 +149,15 @@ void Context::addNode(const std::string &_name)
 			}
 		case nodeType::GRAPH:
 			{
-				std::cout<<"CHECKING FOR STATES\n";
 				Graph *temp = dynamic_cast<Graph*>(n);
-				checkForStates(temp);
+				if(temp==0)
+				{
+					std::cout<<"Failed to type cast\n";
+				}
+				else
+				{
+					checkForStates(temp);
+				}
 				break;
 			}
 		default:

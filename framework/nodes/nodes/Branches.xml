@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<branches>
+	<node name="ternaryTest" type="branch" id="0">
+		<input name='toTest' var='float'/>
+		<input name='toModify' var='vec3'/>
+		<output name='result' var='vec3'/>
+		<condition>> 0.0</condition>
+	</node>
+</branches>

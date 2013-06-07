@@ -9,10 +9,9 @@
 #include <libxml/xmlschemas.h>
 #include <iostream>
 
-const char* Parser::NODESLOTS = "slots";
+const char* Parser::NODEOUTPUT = "output";
+const char* Parser::NODEINPUT = "input";
 const char* Parser::NODE = "node";
-const char* Parser::NODEOUTPUTS = "outputs";
-const char* Parser::NODESLOT = "slot";
 const char* Parser::SLOTSOURCE = "source";
 
 
@@ -30,11 +29,11 @@ Node* Parser::parseNode(const xmlDocPtr &_doc, xmlNodePtr _cur, std::map<std::st
 	{
 		std::cout<<"node type is graph"<<'\n';
 		Graph *temp2 = new Graph();
+		temp2->setID(std::stoi(id));
 		temp2->setName(name);
-	//	temp2->setID(std::stoi(id));
-		printElementNames(_cur);
 		while(_cur != NULL) {
-			if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOT) )
+			if( !xmlStrcmp(_cur->name, (const xmlChar *)NODEOUTPUT) ||
+			    !xmlStrcmp(_cur->name, (const xmlChar *)NODEINPUT) )
 			{
 				if ( _map == NULL)
 				{	
@@ -69,15 +68,17 @@ Node* Parser::parseNode(const xmlDocPtr &_doc, xmlNodePtr _cur, std::map<std::st
 	{
 		temp = new Node();
 		temp->setName(name);
-		//temp->setID(std::stoi(id));
+		temp->setID(std::stoi(id));
 		while(_cur != NULL) {
-			if(!xmlStrcmp(_cur->name, (const xmlChar *)NODESLOT)) {
+			if(!xmlStrcmp(_cur->name, (const xmlChar *)NODEOUTPUT) ||
+			   !xmlStrcmp(_cur->name, (const xmlChar *)NODEINPUT) )
+			{
+		
 				temp->add(parseSlot(temp, _doc, _cur, _map));
 			}
 			_cur = _cur->next;
 		}
 	}
-
 	temp->setType(t);
 	std::cout<<"parsing node "<<name<<"address "<<temp<<" ID "<<temp->getID()<<'\n';
 	return temp;
@@ -95,7 +96,7 @@ Slot* Parser::parseSlot(Node *_parent,const xmlDocPtr &_doc, xmlNodePtr _cur, st
 	s = new Slot(
 			_parent,
 			(const char*)name,
-			p2.parseEnum((const char*)type),
+			p2.parseEnum((const char*)_cur->name),
 			p.parseEnum((const char*)var)
 			);
 	_cur=_cur->children;
@@ -125,13 +126,12 @@ std::string Parser::parseSource(xmlNodePtr _cur, std::map<std::string, std::stri
 	sourcenode = parseAttribute(_cur, "node");
 	sourceid = parseAttribute(_cur, "id");
 	sourceslot = parseAttribute(_cur,  "slot");
+	std::cout<<(char*)sourcenode<<(char*)sourceid<<(char*)sourceslot<<'\n';
 	output = (char*)sourcenode;
-	std::cout<<output<<'\n';
 	output += ".";
 	output += (char*)sourceid;
 	output += ".";
 	output += (char*)sourceslot;
-	std::cout<<output<<'\n';
 	return output;
 }
 

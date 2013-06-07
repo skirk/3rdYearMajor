@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root>
+  <node name="LightInfo" id="0" type="graph">
+    <output name="LightPos_out" var="vec4">
+      <source node="LightPosition" id="0" slot="out1"/>
+    </output>
+    <output name="LightLD_out" var="vec3">
+      <source node="LightLD" id="0" slot="out1"/>
+    </output>
+    <output name="LightLA_out" var="vec3">
+      <source node="LightLA" id="0" slot="out1"/>
+    </output>
+    <output name="LightLS_out" var="vec3">
+      <source node="LightLS" id="0" slot="out1"/>
+    </output>
+    <node name="LightPosition" id="0" type="state">
+      <output name="out1" var="vec4"/>
+    </node>
+    <node name="LightLD" id="0" type="state">
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="LightLA" id="0" type="state">
+      <output name="out1" var="vec3"/>
+    </node>
+    <node name="LightLS" id="0" type="state">
+      <output name="out1" var="vec3"/>
+    </node>
+  </node>
+</root>

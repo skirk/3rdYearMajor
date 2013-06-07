@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root>
+  <node name="toEyeCoord" id="0" type="graph">
+    <input name="Vertex_Pos" var="vec4"/>
+    <input name="Vertex_Norm" var="vec3"/>
+    <output name="Eye_Pos" var="vec4">
+      <source node="MultiplyMat4Vec4" id="0" slot="out1"/>
+    </output>
+    <output name="Eye_Norm" var="vec3">
+      <source node="MultiplyMat3Vec3" id="0" slot="out1"/>
+    </output>
+    <node name="ModelViewMatrix" id="0" type="state">
+      <output name="out1" var="mat4"/>
+    </node>
+    <node name="NormalMatrix" id="0" type="state">
+      <output name="out1" var="mat3"/>
+    </node>
+    <node name="MultiplyMat4Vec4" id="0" type="operator">
+      <input name="in1" var="mat4">
+        <source node="ModelViewMatrix" id="0" slot="out1"/>
+      </input>
+      <input name="in2" var="vec4">
+        <source node="toEyeCoord" id="0" slot="Vertex_Pos"/>
+      </input>
+      <output name="out1" var="vec4"/>
+    </node>
+    <node name="MultiplyMat3Vec3" id="0" type="operator">
+      <input name="in1" var="mat3">
+        <source node="NormalMatrix" id="0" slot="out1"/>
+      </input>
+      <input name="in2" var="vec3">
+        <source node="toEyeCoord" id="0" slot="Vertex_Norm"/>
+      </input>
+      <output name="out1" var="vec3"/>
+    </node>
+  </node>
+</root>

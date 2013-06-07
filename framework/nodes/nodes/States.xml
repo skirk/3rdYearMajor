@@ -1,0 +1,38 @@
+<states>
+	<node name="LightPosition" type="state" id="0">
+		<output name='out1' var='vec4'/>
+	</node>
+	<node name="LightLD" type="state" id="0">
+		<output name='out1' var='vec3'/>
+	</node>
+	<node name="LightLA" type="state" id="0">
+		<output name='out1' var='vec3'/>
+	</node>
+	<node name="LightLS" type="state" id="0">
+		<output name='out1'  var='vec3'/>
+	</node>
+	<node name="MaterialKA"  type="state" id="0">
+		<output name='out1' var='vec3'/>
+	</node>
+	<node name="MaterialKD" type="state" id="0">
+		<output name='out1'  var='vec3'/>
+	</node>
+	<node name="MaterialKS" type="state" id="0">
+		<output name='out1' var='vec3'/>
+	</node>
+	<node name="MaterialShininess" type="state" id="0">
+		<output name='out1' var='float'/>
+	</node>
+	<node name="ModelViewMatrix" type="state" id="0">
+		<output name='out1' var='mat4'/>
+	</node>
+	<node name="NormalMatrix" type="state" id="0">
+		<output name='out1' var='mat3'/>
+	</node>
+	<node name="ProjectionMatrix" type="state" id="0">
+		<output name='out1' var='mat4'/>
+	</node>
+	<node name="MVPMatrix" type="state" id="0">
+		<output name='out1' var='mat4'/>
+	</node>
+</states>
